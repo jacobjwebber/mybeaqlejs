@@ -994,7 +994,6 @@ MushraTest.prototype.readRatings = function (TestIdx) {
         $(this).slider('value', testObject.TestState.Ratings[TestIdx][fileNum]);
         $(this).slider('refresh');
     });
-
 }
 
 // ###################################################################
@@ -1023,7 +1022,6 @@ MushraTest.prototype.saveRatings = function (TestIdx) {
         return false;
     }
 }
-
 
 MushraTest.prototype.createTestDOM = function (TestIdx) {
 
@@ -1110,7 +1108,6 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
             $(this).slider('option', 'value', 0);
             $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
-
 }
 
 MushraTest.prototype.formatResults = function () {
@@ -1237,7 +1234,7 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
         cell[2].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";  
         cell[3] = row[1].insertCell(-1);
         cell[4] = row[1].insertCell(-1);
-        cell[4].innerHTML = "Please select the item which is closest to X!";  
+        cell[4].innerHTML = this.TestConfig.RatingText; 
        
         // add spacing
         row = tab.insertRow(-1);
@@ -1256,7 +1253,6 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
         }
 }
 
-
 AbxTest.prototype.readRatings = function (TestIdx) {
 
     if (this.TestState.Ratings[TestIdx] === "A") {
@@ -1264,7 +1260,6 @@ AbxTest.prototype.readRatings = function (TestIdx) {
     } else if (this.TestState.Ratings[TestIdx] === "B") {
         $("#selectB").prop("checked", true);
     }
-
 }
 
 AbxTest.prototype.saveRatings = function (TestIdx) {
@@ -1316,3 +1311,326 @@ AbxTest.prototype.formatResults = function () {
     resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestConfig.Testsets.length*100).toFixed(2) + " %</p>";
     return resultstring;
 }
+
+// ###################################################################
+// AB test main object
+
+// inherit from ListeningTest
+function AbTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+AbTest.prototype = new ListeningTest();
+AbTest.prototype.constructor = AbTest;
+
+
+// implement specific code
+AbTest.prototype.createTestDOM = function (TestIdx) {
+
+        // clear old test table
+        if ($('#TableContainer > table')) {
+            $('#TableContainer > table').remove();
+        }
+
+        // create new test table
+        var tab = document.createElement('table');
+        tab.setAttribute('id','TestTable');
+
+        var fileID = "";
+        var row = new Array();
+        var cell = new Array();
+
+        // add reference
+        fileID = "A";
+        row  = tab.insertRow(-1);
+        cell[0] = row.insertCell(-1);
+        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        fileID = "B";
+        cell[2] = row.insertCell(-1);
+        cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        cell[3] = row.insertCell(-1);
+        cell[3].innerHTML = "<button class='stopButton'>Stop</button>";
+        
+        cell[4] = row.insertCell(-1);
+        cell[4].innerHTML = "Press buttons to start/stop playback.";
+
+        row[1]  = tab.insertRow(-1);
+        cell[0] = row[1].insertCell(-1);
+        cell[0].innerHTML = "<input type='radio' name='ItemSelection' id='selectA'/>";
+        cell[2] = row[1].insertCell(-1);
+        cell[2].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";
+        cell[3] = row[1].insertCell(-1);
+        cell[4] = row[1].insertCell(-1);
+        cell[4].innerHTML = this.TestConfig.RatingText;
+       
+        // add spacing
+        row = tab.insertRow(-1);
+        row.setAttribute("height","5");
+
+        // append the created table to the DOM
+        $('#TableContainer').append(tab);
+}
+
+AbTest.prototype.readRatings = function (TestIdx) {
+
+    if (this.TestState.Ratings[TestIdx] === "A") {
+        $("#selectA").prop("checked", true);
+    } else if (this.TestState.Ratings[TestIdx] === "B") {
+        $("#selectB").prop("checked", true);
+    }
+}
+
+AbTest.prototype.saveRatings = function (TestIdx) {
+
+    if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
+        $.alert("You must select a preference!", "Warning!")
+        return false;
+    }
+
+    if ($("#selectA").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = this.TestConfig.Testsets[TestIdx].Files["A"];
+    } else if ($("#selectB").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = this.TestConfig.Testsets[TestIdx].Files["B"];
+    }
+}
+
+AbTest.prototype.formatResults = function () {
+
+    var resultstring = "";
+    var tab = document.createElement('table');
+    var row;
+    var cell;
+
+    var numCorrect = 0;
+    var numWrong   = 0;
+
+    // evaluate single tests
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i]        = new Object();
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
+
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            this.TestState.EvalResults[i].Runtime    = this.TestState.Runtime[i];
+            this.TestState.EvalResults[i].preference = new Object();
+
+            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n";
+
+            row  = tab.insertRow(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = this.TestConfig.Testsets[i].Name + "("+this.TestConfig.Testsets[i].TestID+")";
+            cell = row.insertCell(-1);
+
+            this.TestState.EvalResults[i].preference = this.TestState.Ratings[i];
+            cell.innerHTML = this.TestState.Ratings[i];
+
+            resultstring += tab.outerHTML + "\n";
+        }
+    }
+
+    return resultstring;
+}
+
+// ###################################################################
+// Forced choice test main object
+
+// inherit from ListeningTest
+function ForcedChoiceTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+ForcedChoiceTest.prototype = new ListeningTest();
+ForcedChoiceTest.prototype.constructor = ForcedChoiceTest;
+
+ForcedChoiceTest.prototype.createFileMapping = function (TestIdx) {
+    var NumFiles = $.map(this.TestConfig.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
+    var fileMapping = new Array(NumFiles);
+
+    $.each(this.TestConfig.Testsets[TestIdx].Files, function(index, value) {
+
+        do {
+            var RandFileNumber = Math.floor(Math.random()*(NumFiles));
+            if (RandFileNumber>NumFiles-1) RandFileNumber = NumFiles-1;
+        } while (typeof fileMapping[RandFileNumber] !== 'undefined');
+
+        if (RandFileNumber<0) alert(fileMapping);
+        fileMapping[RandFileNumber] = index;
+    });
+
+    this.TestState.FileMappings[TestIdx] = fileMapping;
+}
+
+ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
+
+        // clear old test table
+        if ($('#TableContainer > table')) {
+            $('#TableContainer > table').remove();
+        }
+
+        // create random file mapping if not yet done
+        if (!this.TestState.FileMappings[TestIdx]) {
+                this.createFileMapping(TestIdx);
+        }
+
+        // create new test table
+        var tab = document.createElement('table');
+        tab.setAttribute('id','TestTable');
+
+        var fileID = "";
+        var row = new Array();
+        var cell = new Array();
+
+        // add reference
+        fileID = "Reference";
+        row  = tab.insertRow(-1);
+        cell[0] = row.insertCell(-1);
+        cell[1] = row.insertCell(-1);
+        cell[2] = row.insertCell(-1);
+        cell[3] = row.insertCell(-1);
+        cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";
+
+        // add spacing
+        row = tab.insertRow(-1);
+        row.setAttribute("height","5");
+
+        var rateMin = 0;
+        var rateMax = this.TestConfig.ForcedChoices.length+1;
+            
+        // add test items
+        for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+
+            var fileID = this.TestState.FileMappings[TestIdx][i];
+            var relID  = fileID;
+
+            row[i]  = tab.insertRow(-1);
+            cell[0] = row[i].insertCell(-1);
+            cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
+            cell[1] = row[i].insertCell(-1);
+            cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
+            cell[2] = row[i].insertCell(-1);
+            cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+            cell[3] = row[i].insertCell(-1);
+            var fileIDstr = "";
+            if (this.TestConfig.ShowFileIDs) {
+                    fileIDstr = fileID;
+            }
+            cell[3].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'>"+fileIDstr+"</div>";
+
+            this.addAudio(TestIdx, fileID, relID);
+
+        }
+
+        // append the created table to the DOM
+        $('#TableContainer').append(tab);
+
+        var fcConf = this.TestConfig;
+        $('.rateSlider').each( function() {
+            $(this).slider({
+                    value: 0,
+                    min: 0,
+                    max: fcConf.ForcedChoices.length+1,
+                    animate: false,
+                    orientation: "horizontal",
+                    slide: function( event, ui ) {
+                        if ((ui.value < 1) || (ui.value > fcConf.ForcedChoices.length)) { event.preventDefault(); }
+                    }
+            });
+
+            $(this).slider('option', 'value', 0);
+            $(this).css('background-image', 'url('+fcConf.RateScaleBgPng+')');
+        });
+}
+
+ForcedChoiceTest.prototype.readRatings = function (TestIdx) {
+
+    if ((TestIdx in this.TestState.Ratings)==false) return false;
+
+    var testObject = this;
+    $(".rateSlider").each( function() {
+        var pos = $(this).attr('id').lastIndexOf('slider');
+        var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
+
+        $(this).slider('value', testObject.TestState.Ratings[TestIdx][fileNum]);
+        $(this).slider('refresh');
+    });
+}
+
+ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
+
+    var ratings = new Object();
+    $(".rateSlider").each( function() {
+        var pos = $(this).attr('id').lastIndexOf('slider');
+        var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
+
+        ratings[fileNum] = $(this).slider( "option", "value" );
+    });
+
+    var AllRatingsValid = true;
+    for(var prop in ratings) {
+        if((ratings[prop] < 1) || (ratings[prop] > this.TestConfig.ForcedChoices.length)) {
+            AllRatingsValid = false;
+        }
+    }
+
+    if (AllRatingsValid == true) {
+        this.TestState.Ratings[TestIdx] = ratings;
+        return true;
+    } else {
+        $.alert("Ratings must be in one of the " + this.TestConfig.ForcedChoices.length + " categories!", "Warning!")
+        return false;
+    }
+}
+
+ForcedChoiceTest.prototype.formatResults = function () {
+
+    var resultstring = "";
+
+
+    var numCorrect = 0;
+    var numWrong   = 0;
+
+    // evaluate single tests
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) { 
+        this.TestState.EvalResults[i]           = new Object();
+        this.TestState.EvalResults[i].TestID    = this.TestConfig.Testsets[i].TestID;
+
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
+            this.TestState.EvalResults[i].rating    = new Object();
+            this.TestState.EvalResults[i].filename  = new Object();
+
+            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n";
+
+            var tab = document.createElement('table');
+            var row;
+            var cell;
+
+            row  = tab.insertRow(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = "Filename";
+            cell = row.insertCell(-1);
+            cell.innerHTML = "Rating";
+
+            var fileArr    = this.TestConfig.Testsets[i].Files;
+            var testResult = this.TestState.EvalResults[i];
+
+
+            $.each(this.TestState.Ratings[i], function(fileID, rating) {
+                row  = tab.insertRow(-1);
+                cell = row.insertCell(-1);
+                cell.innerHTML = fileArr[fileID];
+                cell = row.insertCell(-1);
+                cell.innerHTML = rating;
+
+                testResult.rating[fileID]   = rating;
+                testResult.filename[fileID] = fileArr[fileID];
+            });
+
+            resultstring += tab.outerHTML + "\n";
+        }
+    }
+
+    return resultstring;
+}
+

@@ -1,14 +1,15 @@
 // configure the test here
 var TestConfig = {
-  "TestName": "ABX Demo Test",
+  "TestName": "AB Demo Test",
   "RatingText": "Please select the item which is closest to X!",
-  "LoopByDefault": true,
+  "LoopByDefault": false,
   "ShowFileIDs": false,
   "ShowResults": false,
-  "EnableABLoop": true,
+  "EnableABLoop": false,
   "EnableOnlineSubmission": false,
-  "BeaqleServiceURL": "",
+  "BeaqleServiceURL": "http://homepages.inf.ed.ac.uk/s1653112/beaqlejs/web_service/beaqleJS_Service.php",
   "SupervisorContact": "", 
+  "RequirePreference": false,
   "Testsets": [
     //    
     {
