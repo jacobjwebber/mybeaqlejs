@@ -657,6 +657,13 @@ $.extend({ alert: function (message, title) {
         // set some state variables
         this.TestState.TestIsRunning = 1;
 
+        // keep track of which files have been played to completion
+        this.current_relID = null;
+        this.complete = new Object();
+        for (var relID in this.TestState.FileMappings[TestIdx]) {
+            this.complete[parseInt(relID)+1] = false;
+        }
+
         var handlerObject = this;
         $('.stopButton').each( function() {
             $(this).button();
@@ -766,6 +773,10 @@ $.extend({ alert: function (message, title) {
         $('#duration > span').html( m + ':' + s );
         
         var progress = e.target.currentTime / e.target.duration * 100;
+
+        if (progress >= 95.) {
+            this.complete[this.current_relID] = true;
+        }
         
         $('#ProgressBar').progressbar( "option", "value", progress);
     }
@@ -797,6 +808,8 @@ $.extend({ alert: function (message, title) {
         $(".rateSlider[rel="+id+"]").parent().css('background-color', '#D5E5F6');
         $(".playButton[rel="+id+"]").addClass('playButton-active');
         
+        this.current_relID = id;
+
         this.audioPool.play(id);
     }
 
@@ -1558,6 +1571,19 @@ ForcedChoiceTest.prototype.readRatings = function (TestIdx) {
 
 ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 
+    var ProgressComplete = true;
+    for (var relID in this.TestState.FileMappings[TestIdx]) {
+        if (this.complete[relID] === false) {
+            ProgressComplete = false;
+        }
+    }
+
+    // // stops the user proceeding if they have not listened to all sentences
+    // if (ProgressComplete === false) {
+    //     $.alert("Please listen to all sentences fully before completing the task");
+    //     return false;
+    // }
+
     var ratings = new Object();
     $(".rateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
@@ -1566,20 +1592,15 @@ ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
         ratings[fileNum] = $(this).slider( "option", "value" );
     });
 
-    var AllRatingsValid = true;
     for(var prop in ratings) {
         if((ratings[prop] < 1) || (ratings[prop] > this.TestConfig.ForcedChoices.length)) {
-            AllRatingsValid = false;
+            $.alert("Ratings must be in one of the " + this.TestConfig.ForcedChoices.length + " categories!", "Warning!")
+            return false;
         }
     }
 
-    if (AllRatingsValid == true) {
-        this.TestState.Ratings[TestIdx] = ratings;
-        return true;
-    } else {
-        $.alert("Ratings must be in one of the " + this.TestConfig.ForcedChoices.length + " categories!", "Warning!")
-        return false;
-    }
+    this.TestState.Ratings[TestIdx] = ratings;
+    return true;
 }
 
 ForcedChoiceTest.prototype.formatResults = function () {
@@ -1633,4 +1654,5 @@ ForcedChoiceTest.prototype.formatResults = function () {
 
     return resultstring;
 }
+
 
