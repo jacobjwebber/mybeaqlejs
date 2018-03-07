@@ -6,23 +6,23 @@ var TestConfig = {
   "ForcedChoices": ["hap", "sad", "ang", "neu"],
   "ShowFileIDs": false,
   "ShowResults": false,
-  "LoopByDefault": true,
+  "LoopByDefault": false,
   "EnableABLoop": true,
-  "EnableOnlineSubmission": false,
+  "EnableOnlineSubmission": true,
   "BeaqleServiceURL": "http://homepages.inf.ed.ac.uk/s1653112/beaqlejs/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "RandomizeTestOrder": false,
-  "MaxTestsPerRun": 3,
+  "MaxTestsPerRun": 4,
   "Testsets": [
     //    
     {
       "Name": "Schubert 1",
       "TestID": "id1_1",
       "Files": {
-            "1": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
-            "2": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
-            "3": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
-            "4": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+            "1": "audio/IS18_control_space/dummy/AMidsummerNightsDream_005_000/hap.wav",
+            "2": "audio/IS18_control_space/dummy/AMidsummerNightsDream_005_000/sad.wav",
+            "3": "audio/IS18_control_space/dummy/AMidsummerNightsDream_005_000/ang.wav",
+            "4": "audio/IS18_control_space/dummy/AMidsummerNightsDream_005_000/neu.wav",
         },
       "Classes": {
             "1": "hap",
@@ -35,10 +35,10 @@ var TestConfig = {
       "Name": "Schubert 2",
       "TestID": "id1_2",
       "Files": {
-            "1": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
-            "2": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
-            "3": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
-            "4": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
+            "1": "audio/IS18_control_space/dummy/Hamlet_00001_00023_00071/hap.wav",
+            "2": "audio/IS18_control_space/dummy/Hamlet_00001_00023_00071/sad.wav",
+            "3": "audio/IS18_control_space/dummy/Hamlet_00001_00023_00071/ang.wav",
+            "4": "audio/IS18_control_space/dummy/Hamlet_00001_00023_00071/neu.wav",
         },
       "Classes": {
             "1": "hap",
@@ -51,10 +51,10 @@ var TestConfig = {
       "Name": "Schubert 3",
       "TestID": "id1_3",
       "Files": {
-            "1": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
-            "2": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
-            "3": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
-            "4": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+            "1": "audio/IS18_control_space/dummy/PercyAndThePirates_00000_00049_00109/hap.wav",
+            "2": "audio/IS18_control_space/dummy/PercyAndThePirates_00000_00049_00109/sad.wav",
+            "3": "audio/IS18_control_space/dummy/PercyAndThePirates_00000_00049_00109/ang.wav",
+            "4": "audio/IS18_control_space/dummy/PercyAndThePirates_00000_00049_00109/neu.wav",
         },
       "Classes": {
             "1": "hap",
@@ -68,10 +68,10 @@ var TestConfig = {
       "Name": "Castanets",
       "TestID": "id2_1",
       "Files": {
-            "1": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
-            "2": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
-            "3": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
-            "4": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
+            "1": "audio/IS18_control_space/dummy/PirateAdventures_00002_00115_00282/hap.wav",
+            "2": "audio/IS18_control_space/dummy/PirateAdventures_00002_00115_00282/sad.wav",
+            "3": "audio/IS18_control_space/dummy/PirateAdventures_00002_00115_00282/ang.wav",
+            "4": "audio/IS18_control_space/dummy/PirateAdventures_00002_00115_00282/neu.wav",
         },
       "Classes": {
             "1": "hap",
