@@ -1494,8 +1494,7 @@ ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
         var row = new Array();
         var cell = new Array();
 
-        // add reference
-        fileID = "Reference";
+        // add first row with scale image
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
         cell[1] = row.insertCell(-1);
