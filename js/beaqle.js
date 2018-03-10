@@ -1356,12 +1356,12 @@ AbTest.prototype.createTestDOM = function (TestIdx) {
         fileID = "A";
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
-        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
+        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">play A</button>';
         this.addAudio(TestIdx, fileID, fileID);
 
         fileID = "B";
         cell[2] = row.insertCell(-1);
-        cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
+        cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">play B</button>';
         this.addAudio(TestIdx, fileID, fileID);
 
         cell[3] = row.insertCell(-1);
