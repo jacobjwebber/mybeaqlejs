@@ -551,6 +551,7 @@ $.extend({ alert: function (message, title) {
                 $('#TableContainer').hide();
                 $('#PlayerControls').hide();
                 $('#TestControls').hide();
+                $('#TestInstructions').hide();
                 $('#TestEnd').show();
 
                 $('#ResultsBox').html(this.formatResults());
@@ -652,8 +653,9 @@ $.extend({ alert: function (message, title) {
         $('#TestControls').hide();
         $('#TableContainer').hide();
         $('#PlayerControls').hide();
+        $('#TestInstructions').hide();
         $('#LoadOverlay').show();
-                
+ 
         // set some state variables
         this.TestState.TestIsRunning = 1;
 
@@ -729,6 +731,7 @@ $.extend({ alert: function (message, title) {
             $('#TestControls').show();
             $('#TableContainer').show();
             $('#PlayerControls').show();       
+            $('#TestInstructions').show();
             $('#LoadOverlay').hide();
         }
     }

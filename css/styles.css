@@ -52,6 +52,12 @@ body {
     display: none;	
 }
 
+#TestInstructions {
+    text-align:center;
+    min-height:100px;
+    display: none;	
+}
+
 #TestEnd{
     text-align:center;
     min-height:300px;
