@@ -645,7 +645,7 @@ $.extend({ alert: function (message, title) {
         this.createTestDOM(TestIdx);
 
         // set current test name
-        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
+        $('#TestHeading').html("Progress: " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length);
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -1501,16 +1501,16 @@ ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
         cell[1] = row.insertCell(-1);
-        cell[2] = row.insertCell(-1);
-        cell[3] = row.insertCell(-1);
-        cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";
+        // cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";
+
+        for (var i = 0; i < this.TestConfig.ForcedChoices.length; i++) {
+            cell[2+i] = row.insertCell(-1);
+            cell[2+i].innerHTML = "<span class='testChoice'>"+this.TestConfig.ForcedChoices[i]+"</span>"
+        }
 
         // add spacing
         row = tab.insertRow(-1);
         row.setAttribute("height","5");
-
-        var rateMin = 0;
-        var rateMax = this.TestConfig.ForcedChoices.length+1;
             
         // add test items
         for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
@@ -1523,14 +1523,17 @@ ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
             cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
             cell[1] = row[i].insertCell(-1);
             cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
-            cell[2] = row[i].insertCell(-1);
-            cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
-            cell[3] = row[i].insertCell(-1);
+            // cell[2] = row[i].insertCell(-1);
+            // cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
             var fileIDstr = "";
             if (this.TestConfig.ShowFileIDs) {
                     fileIDstr = fileID;
             }
-            cell[3].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'>"+fileIDstr+"</div>";
+
+            for (var j = 0; j < this.TestConfig.ForcedChoices.length; j++) {
+                cell[2+j] = row[i].insertCell(-1);
+                cell[2+j].innerHTML = "<input type='radio' value='"+fileID+"' name='ItemSelection"+i+"' id='"+i+this.TestConfig.ForcedChoices[j]+"'/>";
+            }
 
             this.addAudio(TestIdx, fileID, relID);
 
@@ -1538,47 +1541,32 @@ ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
 
         // append the created table to the DOM
         $('#TableContainer').append(tab);
-
-        var fcConf = this.TestConfig;
-        $('.rateSlider').each( function() {
-            $(this).slider({
-                    value: 0,
-                    min: 0,
-                    max: fcConf.ForcedChoices.length+1,
-                    animate: false,
-                    orientation: "horizontal",
-                    slide: function( event, ui ) {
-                        if ((ui.value < 1) || (ui.value > fcConf.ForcedChoices.length)) { event.preventDefault(); }
-                    }
-            });
-
-            $(this).slider('option', 'value', 0);
-            $(this).css('background-image', 'url('+fcConf.RateScaleBgPng+')');
-        });
 }
 
 ForcedChoiceTest.prototype.readRatings = function (TestIdx) {
 
     if ((TestIdx in this.TestState.Ratings)==false) return false;
 
-    var testObject = this;
-    $(".rateSlider").each( function() {
-        var pos = $(this).attr('id').lastIndexOf('slider');
-        var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
-
-        $(this).slider('value', testObject.TestState.Ratings[TestIdx][fileNum]);
-        $(this).slider('refresh');
-    });
+    for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+        $("#"+this.TestState.Ratings[TestIdx][i]).prop("checked", true);
+    }
 }
 
 ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 
-    var ProgressComplete = true;
-    for (var relID in this.TestState.FileMappings[TestIdx]) {
-        if (this.complete[relID] === false) {
-            ProgressComplete = false;
+    for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+        if (!$("input[name='ItemSelection"+i+"']:checked").val()) {
+            $.alert("You must select a preference!", "Warning!")
+            return false;
         }
     }
+
+    // var ProgressComplete = true;
+    // for (var relID in this.TestState.FileMappings[TestIdx]) {
+    //     if (this.complete[relID] === false) {
+    //         ProgressComplete = false;
+    //     }
+    // }
 
     // // stops the user proceeding if they have not listened to all sentences
     // if (ProgressComplete === false) {
@@ -1586,22 +1574,16 @@ ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
     //     return false;
     // }
 
-    var ratings = new Object();
-    $(".rateSlider").each( function() {
-        var pos = $(this).attr('id').lastIndexOf('slider');
-        var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
-
-        ratings[fileNum] = $(this).slider( "option", "value" );
-    });
-
-    for(var prop in ratings) {
-        if((ratings[prop] < 1) || (ratings[prop] > this.TestConfig.ForcedChoices.length)) {
-            $.alert("Ratings must be in one of the " + this.TestConfig.ForcedChoices.length + " categories!", "Warning!")
-            return false;
+    this.TestState.Ratings[TestIdx] = new Object();
+    for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+        for (var j = 0; j < this.TestConfig.ForcedChoices.length; j++) {
+            if ($("#"+i+this.TestConfig.ForcedChoices[j]).prop("checked")) {
+                var fileID = this.TestState.FileMappings[TestIdx][i];
+                this.TestState.Ratings[TestIdx][fileID] = this.TestConfig.ForcedChoices[j];
+            }
         }
     }
 
-    this.TestState.Ratings[TestIdx] = ratings;
     return true;
 }
 
