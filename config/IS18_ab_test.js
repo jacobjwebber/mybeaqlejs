@@ -1,7 +1,7 @@
 // configure the test here
 var TestConfig = {
   "TestName": "AB Demo Test",
-  "RatingText": "Please select the item you prefer (placeholder question)",
+  "RatingText": "Select the version that you prefer",
   "LoopByDefault": false,
   "ShowFileIDs": false,
   "ShowResults": false,
