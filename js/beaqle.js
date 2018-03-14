@@ -662,9 +662,6 @@ $.extend({ alert: function (message, title) {
         // keep track of which files have been played to completion
         this.current_relID = null;
         this.complete = new Object();
-        for (var relID in this.TestState.FileMappings[TestIdx]) {
-            this.complete[parseInt(relID)+1] = false;
-        }
 
         var handlerObject = this;
         $('.stopButton').each( function() {
@@ -1401,11 +1398,11 @@ AbTest.prototype.readRatings = function (TestIdx) {
 
 AbTest.prototype.saveRatings = function (TestIdx) {
 
-    // // stops the user proceeding if they have not listened to all sentences
-    // if (this.complete["A"] === false || this.complete["B"] === false) {
-    //     $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
-    //     return false;
-    // }
+    // stops the user proceeding if they have not listened to all sentences
+    if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
+        $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
+        return false;
+    }
 
     if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
         $.alert("You must select a preference!", "Warning!")
@@ -1567,18 +1564,19 @@ ForcedChoiceTest.prototype.readRatings = function (TestIdx) {
 
 ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 
-    // var ProgressComplete = true;
-    // for (var relID in this.TestState.FileMappings[TestIdx]) {
-    //     if (this.complete[relID] === false) {
-    //         ProgressComplete = false;
-    //     }
-    // }
+    var ProgressComplete = true;
+    for (var i in this.TestState.FileMappings[TestIdx]) {
+        var relID = this.TestState.FileMappings[TestIdx][i];
+        if (this.complete[relID] == undefined) {
+            ProgressComplete = false;
+        }
+    }
 
-    // // stops the user proceeding if they have not listened to all sentences
-    // if (ProgressComplete === false) {
-    //     $.alert("Please listen to all sentences fully before completing the task", "Warning!");
-    //     return false;
-    // }
+    // stops the user proceeding if they have not listened to all sentences
+    if (ProgressComplete === false) {
+        $.alert("Please listen to all sentences fully before completing the task", "Warning!");
+        return false;
+    }
 
     for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
         if (!$("input[name='ItemSelection"+i+"']:checked").val()) {
