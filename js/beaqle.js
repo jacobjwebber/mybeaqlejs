@@ -777,7 +777,7 @@ $.extend({ alert: function (message, title) {
         
         var progress = e.target.currentTime / e.target.duration * 100;
 
-        if (progress >= 95.) {
+        if (progress >= 80.) {
             this.complete[this.current_relID] = true;
         }
         
@@ -1401,6 +1401,12 @@ AbTest.prototype.readRatings = function (TestIdx) {
 
 AbTest.prototype.saveRatings = function (TestIdx) {
 
+    // // stops the user proceeding if they have not listened to all sentences
+    // if (this.complete["A"] === false || this.complete["B"] === false) {
+    //     $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
+    //     return false;
+    // }
+
     if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
         $.alert("You must select a preference!", "Warning!")
         return false;
@@ -1561,13 +1567,6 @@ ForcedChoiceTest.prototype.readRatings = function (TestIdx) {
 
 ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 
-    for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
-        if (!$("input[name='ItemSelection"+i+"']:checked").val()) {
-            $.alert("You must select a preference!", "Warning!")
-            return false;
-        }
-    }
-
     // var ProgressComplete = true;
     // for (var relID in this.TestState.FileMappings[TestIdx]) {
     //     if (this.complete[relID] === false) {
@@ -1577,9 +1576,16 @@ ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 
     // // stops the user proceeding if they have not listened to all sentences
     // if (ProgressComplete === false) {
-    //     $.alert("Please listen to all sentences fully before completing the task");
+    //     $.alert("Please listen to all sentences fully before completing the task", "Warning!");
     //     return false;
     // }
+
+    for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+        if (!$("input[name='ItemSelection"+i+"']:checked").val()) {
+            $.alert("You must select a preference!", "Warning!")
+            return false;
+        }
+    }
 
     this.TestState.Ratings[TestIdx] = new Object();
     for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
