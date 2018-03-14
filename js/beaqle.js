@@ -1518,9 +1518,16 @@ ForcedChoiceTest.prototype.createTestDOM = function (TestIdx) {
             var fileID = this.TestState.FileMappings[TestIdx][i];
             var relID  = fileID;
 
+            var fileIDstr = "";
+            if (this.TestConfig.ShowFileIDs) {
+                fileIDstr = fileID;
+            } else {
+                fileIDstr = "Test item " + (i+1)
+            }
+
             row[i]  = tab.insertRow(-1);
             cell[0] = row[i].insertCell(-1);
-            cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
+            cell[0].innerHTML = "<span class='testItem'>"+fileIDstr+"</span>";
             cell[1] = row[i].insertCell(-1);
             cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
             // cell[2] = row[i].insertCell(-1);
