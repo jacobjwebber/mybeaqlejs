@@ -145,6 +145,7 @@ var TestConfig = {
   "RandomizeTestOrder": true,        // <=  Present test sets in a random order
   "MaxTestsPerRun": -1,              // <=  Only run a random subset of all available
                                      //     tests, set to -1 to disable
+  "AudioRoot": "",                   // <=  path to prepend to all audio URLs in the testsets
   "Testsets": [ {...}, {...}, ... ], // <=  Definition of test sets and files, more
                                      //     details below
 }
@@ -171,7 +172,11 @@ A typical application of ABX tests would be the evaluation of the transparency o
 ]
 ```
 
-## 3.3 MUSHRA ##
+## 3.3 Preference Testing ##
+
+A preference test (or A/B test) is a simplified version of ABX in which the listener is to decide which of two stimuli sounds better. A typical application of preference tests would be the comparison of different speech synthesis methods. Over a range of stimuli and listeners, one method (A or B) might be shown to be better than the other (one might use a sign test for comparison of results for A and B). Configuration is identical to the ABX test; however, no X is presented to the user.
+
+## 3.4 MUSHRA ##
 
 In a MUSHRA test (ITU-R BS.1116-1) the listener gets presented an item marked as reference together with several anonymous test items. By using a slider for each test item he has to rate how close the items are to the reference on top. Among the test items there is usually also one hidden reference and one, or several, anchor signals to prove the validity of the ratings and the qualification of the participants.
 
@@ -247,11 +252,11 @@ BeaqleJS can send the test results in JSON format to a web service to collect th
 
 ## 5.1 Setup ##
 
-1. Upload the file `web_service/beaqleJS_Service.php` to a webserver. Create a folder named `results/` next to the PHP script and make sure that the webserver has write permissions on it.
+1. Verify that the `/web_service/beaqleJS_Service.php` file is uploaded to the root folder of your webserver next to the other BeaqleJS files. Create a folder `/web_service/results/` and make sure that the webserver has write permissions on it.
 
-2. Try to execute the script in your browser. For example, point your browser to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`. The script performs a self-test and checks PHP version and write permission of the `results/` folder.
+2. Try to execute the script in your browser. For example, point your browser to `http://yourdomain.com/web_service/beaqleJS_Service.php`. The script performs a self-test and checks PHP version and write permission of the `results/` folder.
 
-3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`) and set the `BeaqleServiceURL` to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`.
+3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`). If necessary, adjust the `BeaqleServiceURL` to point to the location where the `beaqleJS_Service.php` can be found. Note that the [Same Origin Policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) in almost every web browser forbids a cross-site result transmission without additional configuration of [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS). 
 
 ## 5.2 Security ##
 
@@ -265,7 +270,7 @@ There are two provisions to avoid spamming of your sever:
 
 # 6. Internals #
 
-![BeaqleJS functional blocks](https://s14.postimg.org/xozlybqdd/schematic.png)
+![BeaqleJS functional blocks](https://s14.postimg.cc/xozlybqdd/schematic.png)
 
 The general structure of BeaqleJS can be divided in three blocks as visualised in the diagram above. There is a common HTML5 `index.html` file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the `index.html`. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known [jQuery](https://jquery.com/) and [jQueryUI](http://jqueryui.com/) libraries are used.
 

@@ -19,6 +19,11 @@
 // Enable JavaScript strict mode
 "use strict";
 
+// some linter configs
+/*jshint browser: true */
+/*jshint devel: true */
+/*globals $:false */
+
 // ###################################################################
 // Audio pool object. Creates and manages a set of <audio> tags.
 
@@ -56,7 +61,6 @@
              this.waContext = false;
              break;
         }
-
         // IE does not support the WebAudioAPI
         if (clientIsIE() || clientIsSafari())
             this.waContext = false;
@@ -425,16 +429,6 @@ $.extend({ alert: function (message, title) {
             "AudioLoadError": false
         }
 
-
-        // create and configure audio pool
-        this.audioPool = new AudioPool('AudioPool');
-        this.audioPool.register();
-        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
-        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
-        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
-        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
-        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
-
         this.checkBrowserFeatures();
 
         // show introduction div
@@ -518,13 +512,58 @@ $.extend({ alert: function (message, title) {
           "BeaqleServiceURL": "",
           "SupervisorContact": "",
           "RandomizeTestOrder": false,
-          "MaxTestsPerRun": -1
+          "MaxTestsPerRun": -1,
+          "AudioRoot": ""
         }
       
         for (var property in defaults) {
             if (config[property] === undefined)
                 config[property] = defaults[property];
         }
+    }
+    
+    // ###################################################################
+    ListeningTest.prototype.initAudio = function() {
+        // create and configure audio pool
+        // In versions of chrome > 71 this has to be done in response to
+        // a user action in order to be able to play audio (https://goo.gl/7K7WLu)
+        this.audioPool = new AudioPool('AudioPool');
+        this.audioPool.register();
+        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
+        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
+        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
+        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
+        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
+    }    
+    
+    // ###################################################################
+    ListeningTest.prototype.startTests = function() {
+        
+        // init audio pool after user started the tests
+        this.initAudio();
+        
+        // init linear test sequence
+        this.TestState.TestSequence = Array();
+        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
+            this.TestState.TestSequence[i] = i;
+
+        // shorten and/or shuffle the sequence
+        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
+            this.TestConfig.RandomizeTestOrder = true;
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
+        } else if (this.TestConfig.RandomizeTestOrder == true) {
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+        }
+
+        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
+        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
+//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
+        this.TestState.startTime = 0;
+
+        // run first test
+        this.TestState.CurrentTest = 0;
+    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
     // ###################################################################
@@ -603,33 +642,6 @@ $.extend({ alert: function (message, title) {
         }
     }
 
-    // ###################################################################
-    ListeningTest.prototype.startTests = function() {
-        
-        // init linear test sequence
-        this.TestState.TestSequence = Array();
-        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
-            this.TestState.TestSequence[i] = i;
-
-        // shorten and/or shuffle the sequence
-        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
-            this.TestConfig.RandomizeTestOrder = true;
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
-        } else if (this.TestConfig.RandomizeTestOrder == true) {
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-        }
-
-        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
-        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
-//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
-        this.TestState.startTime = 0;
-
-        // run first test
-        this.TestState.CurrentTest = 0;
-    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
-    }
-
     // ###################################################################    
     // prepares display to run test with number TestIdx
     ListeningTest.prototype.runTest = function(TestIdx) {
@@ -645,7 +657,7 @@ $.extend({ alert: function (message, title) {
         this.createTestDOM(TestIdx);
 
         // set current test name
-        $('#TestHeading').html("Progress: " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length);
+        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -817,7 +829,9 @@ $.extend({ alert: function (message, title) {
     // add and load audio file with specified ID
     ListeningTest.prototype.addAudio = function (TestIdx, fileID, relID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestConfig.Testsets[TestIdx].Files[fileID], relID)
+        this.audioPool.addAudio(this.TestConfig.AudioRoot +
+                                this.TestConfig.Testsets[TestIdx].Files[fileID],
+                                relID)
     }
 
     // ###################################################################
@@ -847,9 +861,9 @@ $.extend({ alert: function (message, title) {
                         $('#SubmitError').show();
                         $('#SubmitError > #ErrorCode').html(response.message);
                         $("#SubmitBox > .submitOnline").hide();
-                        if (this.TestConfig.SupervisorContact) {
+                        if (testHandle.TestConfig.SupervisorContact) {
                             $("#SubmitBox > .submitEmail").show();
-                            $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                            $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
                         }
                         if (testHandle.browserFeatures.webAPIs['Blob']) {
                             $("#SubmitBox > .submitDownload").show();
@@ -864,9 +878,9 @@ $.extend({ alert: function (message, title) {
                     $('#SubmitError').show();
                     $('#SubmitError > #ErrorCode').html(xhr.status);
                     $("#SubmitBox > .submitOnline").hide();
-                    if (this.TestConfig.SupervisorContact) {
+                    if (testHandle.TestConfig.SupervisorContact) {
                         $("#SubmitBox > .submitEmail").show();
-                        $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                        $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
                     }
                     if (testHandle.browserFeatures.webAPIs['Blob']) {
                         $("#SubmitBox > .submitDownload").show();
@@ -903,8 +917,17 @@ $.extend({ alert: function (message, title) {
         var features = new Object();
 
         features.webAPIs = new Array();
-        features.webAPIs['webAudio'] = this.audioPool.waContext!==false;
         features.webAPIs['Blob']     = !!window.Blob;
+        
+        // check web audio support
+        try {
+           var genContextClass = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
+           var waContext = new genContextClass();
+           features.webAPIs['webAudio'] = waContext !== false;
+        } catch(e) {
+           // API not supported
+           features.webAPIs['webAudio'] = false;
+        }    
 
         features.audioFormats = new Array();
         var a = document.createElement('audio');
@@ -1117,8 +1140,6 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
                     animate: false,
                     orientation: "horizontal"
             });
-                    
-            $(this).slider('option', 'value', 0);
             $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
 }
@@ -1325,19 +1346,21 @@ AbxTest.prototype.formatResults = function () {
     return resultstring;
 }
 
+
+
 // ###################################################################
-// AB test main object
+// Preference test main object (modelled after ABX-Test)
 
 // inherit from ListeningTest
-function AbTest(TestData) {
+function PrefTest(TestData) {
     ListeningTest.apply(this, arguments);
 }
-AbTest.prototype = new ListeningTest();
-AbTest.prototype.constructor = AbTest;
+PrefTest.prototype = new ListeningTest();
+PrefTest.prototype.constructor = PrefTest;
 
 
 // implement specific code
-AbTest.prototype.createTestDOM = function (TestIdx) {
+PrefTest.prototype.createTestDOM = function (TestIdx) {
 
         // clear old test table
         if ($('#TableContainer > table')) {
@@ -1352,42 +1375,66 @@ AbTest.prototype.createTestDOM = function (TestIdx) {
         var row = new Array();
         var cell = new Array();
 
+
+        // create random file mapping if not yet done
+        if (!this.TestState.FileMappings[TestIdx]) {
+           this.TestState.FileMappings[TestIdx] = {"A": "", "B": ""};
+           var RandFileNumber = Math.random();
+           if (this.TestConfig.RandomizeFileOrder && RandFileNumber>0.5) {
+               this.TestState.FileMappings[TestIdx].A = "B";
+               this.TestState.FileMappings[TestIdx].B = "A";
+           } else {
+               this.TestState.FileMappings[TestIdx].A = "A";
+               this.TestState.FileMappings[TestIdx].B = "B";
+            }                
+        }	
+
         // add reference
-        fileID = "A";
+        fileID = this.TestState.FileMappings[TestIdx].A;
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
-        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">play A</button>';
+        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
         this.addAudio(TestIdx, fileID, fileID);
 
-        fileID = "B";
-        cell[2] = row.insertCell(-1);
-        cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">play B</button>';
+        fileID = this.TestState.FileMappings[TestIdx].B;
+        cell[1] = row.insertCell(-1);
+        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
         this.addAudio(TestIdx, fileID, fileID);
+
+        cell[2] = row.insertCell(-1);
+        cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
 
         cell[3] = row.insertCell(-1);
-        cell[3].innerHTML = "<button class='stopButton'>Stop</button>";
-        
-        cell[4] = row.insertCell(-1);
-        cell[4].innerHTML = "Press buttons to start/stop playback.";
+        cell[3].innerHTML = "Press buttons to start/stop playback."; 
 
         row[1]  = tab.insertRow(-1);
         cell[0] = row[1].insertCell(-1);
         cell[0].innerHTML = "<input type='radio' name='ItemSelection' id='selectA'/>";
+        cell[1] = row[1].insertCell(-1);
+        cell[1].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";  
         cell[2] = row[1].insertCell(-1);
-        cell[2].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";
         cell[3] = row[1].insertCell(-1);
-        cell[4] = row[1].insertCell(-1);
-        cell[4].innerHTML = this.TestConfig.RatingText;
-       
+        cell[3].innerHTML = "Please select the item which you prefer!";
+
         // add spacing
         row = tab.insertRow(-1);
-        row.setAttribute("height","5");
+        row.setAttribute("height","5");  
 
         // append the created table to the DOM
-        $('#TableContainer').append(tab);
+        $('#TableContainer').append(tab);	
+
+        // randomly preselect one radio button
+        if (typeof this.TestState.Ratings[TestIdx] == 'undefined') {
+            /*if (Math.random() > 0.5) {
+               $("#selectB").prop("checked", true);
+            } else {
+               $("#selectA").prop("checked", true);
+            }*/
+        }
 }
 
-AbTest.prototype.readRatings = function (TestIdx) {
+
+PrefTest.prototype.readRatings = function (TestIdx) {
 
     if (this.TestState.Ratings[TestIdx] === "A") {
         $("#selectA").prop("checked", true);
@@ -1396,7 +1443,13 @@ AbTest.prototype.readRatings = function (TestIdx) {
     }
 }
 
-AbTest.prototype.saveRatings = function (TestIdx) {
+PrefTest.prototype.saveRatings = function (TestIdx) {
+
+    if ($("#selectA").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "A";
+    } else if ($("#selectB").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "B";
+    }
 
     // stops the user proceeding if they have not listened to all sentences
     if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
@@ -1408,49 +1461,50 @@ AbTest.prototype.saveRatings = function (TestIdx) {
         $.alert("You must select a preference!", "Warning!")
         return false;
     }
-
-    if ($("#selectA").prop("checked")) {
-        this.TestState.Ratings[TestIdx] = this.TestConfig.Testsets[TestIdx].Files["A"];
-    } else if ($("#selectB").prop("checked")) {
-        this.TestState.Ratings[TestIdx] = this.TestConfig.Testsets[TestIdx].Files["B"];
-    }
 }
 
-AbTest.prototype.formatResults = function () {
+PrefTest.prototype.formatResults = function () {
 
     var resultstring = "";
     var tab = document.createElement('table');
-    var row;
-    var cell;
+    var head = tab.createTHead();
+    var row = head.insertRow(-1);
+    var cell = row.insertCell(-1); cell.innerHTML = "Test Name and ID";
+    cell = row.insertCell(-1);     cell.innerHTML = "presented order";
+    cell = row.insertCell(-1);     cell.innerHTML = "time in ms";
+    cell = row.insertCell(-1);     cell.innerHTML = "chosen preference";
 
     var numCorrect = 0;
     var numWrong   = 0;
 
     // evaluate single tests
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
-        this.TestState.EvalResults[i]        = new Object();
+        this.TestState.EvalResults[i] = new Object();
         this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
-
         if (this.TestState.TestSequence.indexOf(i)>=0) {
-            this.TestState.EvalResults[i].Runtime    = this.TestState.Runtime[i];
-            this.TestState.EvalResults[i].preference = new Object();
-
-            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n";
-
             row  = tab.insertRow(-1);
             cell = row.insertCell(-1);
             cell.innerHTML = this.TestConfig.Testsets[i].Name + "("+this.TestConfig.Testsets[i].TestID+")";
             cell = row.insertCell(-1);
 
-            this.TestState.EvalResults[i].preference = this.TestState.Ratings[i];
-            cell.innerHTML = this.TestState.Ratings[i];
+            this.TestState.EvalResults[i].PresentationOrder = "A=" + this.TestState.FileMappings[i].A + ", B=" + this.TestState.FileMappings[i].B;
+            cell.innerHTML = this.TestState.EvalResults[i].PresentationOrder;
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Runtime; 
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Preference = this.TestState.Ratings[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Preference;
 
-            resultstring += tab.outerHTML + "\n";
+            # resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n"; 
         }
     }
 
+    resultstring += tab.outerHTML + "\n";
     return resultstring;
 }
+
+
 
 // ###################################################################
 // Forced choice test main object
@@ -1649,5 +1703,6 @@ ForcedChoiceTest.prototype.formatResults = function () {
 
     return resultstring;
 }
+
 
 
