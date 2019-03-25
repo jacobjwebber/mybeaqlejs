@@ -1495,7 +1495,7 @@ PrefTest.prototype.formatResults = function () {
             this.TestState.EvalResults[i].Preference = this.TestState.Ratings[i];
             cell.innerHTML = this.TestState.EvalResults[i].Preference;
 
-            # resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n"; 
+            // resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n"; 
         }
     }
 
