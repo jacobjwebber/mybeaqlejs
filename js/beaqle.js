@@ -1418,7 +1418,7 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
 
         // add spacing
         row = tab.insertRow(-1);
-        row.setAttribute("height","5");  
+        row.setAttribute("height","5");
 
         // append the created table to the DOM
         $('#TableContainer').append(tab);	
@@ -1433,7 +1433,6 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
         }
 }
 
-
 PrefTest.prototype.readRatings = function (TestIdx) {
 
     if (this.TestState.Ratings[TestIdx] === "A") {
@@ -1445,12 +1444,6 @@ PrefTest.prototype.readRatings = function (TestIdx) {
 
 PrefTest.prototype.saveRatings = function (TestIdx) {
 
-    if ($("#selectA").prop("checked")) {
-        this.TestState.Ratings[TestIdx] = "A";
-    } else if ($("#selectB").prop("checked")) {
-        this.TestState.Ratings[TestIdx] = "B";
-    }
-
     // stops the user proceeding if they have not listened to all sentences
     if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
         $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
@@ -1460,6 +1453,12 @@ PrefTest.prototype.saveRatings = function (TestIdx) {
     if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
         $.alert("You must select a preference!", "Warning!")
         return false;
+    }
+
+    if ($("#selectA").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "A";
+    } else if ($("#selectB").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "B";
     }
 }
 
@@ -1703,6 +1702,5 @@ ForcedChoiceTest.prototype.formatResults = function () {
 
     return resultstring;
 }
-
 
 
