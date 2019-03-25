@@ -1,6 +1,6 @@
 // configure the test here
 var TestConfig = {
-  "TestName": "AB Demo Test",
+  "TestName": "Pairwise paragraph perference Test",
   "RatingText": "Select the version that you prefer",
   "LoopByDefault": false,
   "ShowFileIDs": false,
