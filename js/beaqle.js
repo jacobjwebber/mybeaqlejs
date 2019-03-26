@@ -143,7 +143,7 @@
 
         audiotag.setAttribute('src', path);
         audiotag.setAttribute('class', 'audiotags');
-        audiotag.setAttribute('id', "audio"+ID)
+        audiotag.setAttribute('id', "audio"+ID);
 
         if (this.waContext!==false) {
             var gainNode = this.waContext.createGain();
@@ -388,7 +388,7 @@ $.extend({ alert: function (message, title) {
     resizable: false,
     title: title,
     modal: true
-  }).text(message);
+  }).html(message);
 }
 });
 
@@ -423,6 +423,7 @@ $.extend({ alert: function (message, title) {
             "CurrentTest": -1, 		// the current test index
             "TestIsRunning": 0,		// is true if test is running, false when finished or not yet started
             "FileMappings": [],		// json array with random file mappings
+            "WasListenedTo": [],    // json array indicating which files have been fully listened to
             "Ratings": [],			// json array with ratings
             "EvalResults": [],      // json array to store the evaluated test results
             "AudiosInLoadQueue": -1,
@@ -677,7 +678,6 @@ $.extend({ alert: function (message, title) {
 
         // keep track of which files have been played to completion
         this.current_relID = null;
-        this.complete = new Object();
 
         var handlerObject = this;
         $('.stopButton').each( function() {
@@ -791,7 +791,8 @@ $.extend({ alert: function (message, title) {
         var progress = e.target.currentTime / e.target.duration * 100;
 
         if (progress >= 80.) {
-            this.complete[this.current_relID] = true;
+            var TestIdx = this.TestState.TestSequence[this.TestState.CurrentTest];
+            this.TestState.WasListenedTo[TestIdx][this.current_relID] = true;
         }
         
         $('#ProgressBar').progressbar( "option", "value", progress);
@@ -1041,18 +1042,29 @@ MushraTest.prototype.readRatings = function (TestIdx) {
 MushraTest.prototype.saveRatings = function (TestIdx) {
 
     var ProgressComplete = true;
-    var Missing = '';
-    for (var i in this.TestState.FileMappings[TestIdx]) {
-        var relID = this.TestState.FileMappings[TestIdx][i];
-        if (this.complete[relID] == undefined) {
+    var Missing = new Array();
+    for (var relID in this.TestState.WasListenedTo[TestIdx]) {
+
+        var is_complete = this.TestState.WasListenedTo[TestIdx][relID];
+        if (is_complete === false) {
+
             ProgressComplete = false;
-            Missing += relID + ', '
+
+            if (relID === 'Reference') {
+                Missing.push("- Reference")
+            } else if (relID === "HiddenRef") {
+                var i = this.TestState.FileMappings[TestIdx].indexOf("Reference");
+                Missing.push("- Test Item " + (i + 1))
+            } else {
+                var i = this.TestState.FileMappings[TestIdx].indexOf(relID);
+                Missing.push("- Test Item " + (i + 1))
+            }
         }
     }
 
     // stops the user proceeding if they have not listened to all sentences
     if (ProgressComplete === false) {
-        $.alert("Please listen to all sentences fully before completing the task", "Warning!");
+        $.alert("Please complete this task before moving on.<br><br>Clips that have not been fully listened to:<br>" + Missing.join('<br>'), "Warning!");
         return false;
     }
 
@@ -1075,7 +1087,7 @@ MushraTest.prototype.saveRatings = function (TestIdx) {
         this.TestState.Ratings[TestIdx] = ratings;
         return true;
     } else {
-        $.alert("At least one of your ratings has to be " + this.TestConfig.RateMaxValue + " for valid results!", "Warning!")
+        $.alert("Please complete this task before moving on.<br><br>At least one of your ratings has to be " + this.TestConfig.RateMaxValue + " for valid results!", "Warning!")
         return false;
     }
 }
@@ -1090,6 +1102,24 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         // create random file mapping if not yet done
         if (!this.TestState.FileMappings[TestIdx]) {
                 this.createFileMapping(TestIdx);
+        }
+
+        if (!this.TestState.WasListenedTo[TestIdx]) {
+            // The order in which we add to this object indicates the order given in the alert.
+            this.TestState.WasListenedTo[TestIdx] = new Object();
+
+            this.TestState.WasListenedTo[TestIdx]["Reference"] = false;
+
+            for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) {
+                var fileID = this.TestState.FileMappings[TestIdx][i];
+
+                if (fileID === "Reference")
+                    relID = "HiddenRef";
+                else
+                    relID = fileID;
+
+                this.TestState.WasListenedTo[TestIdx][relID] = false;
+            }
         }
 
         // create new test table
@@ -1111,7 +1141,7 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  	
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";  	
-        
+
         this.addAudio(TestIdx, fileID, fileID);
             
         // add spacing
@@ -1317,7 +1347,7 @@ AbxTest.prototype.readRatings = function (TestIdx) {
 AbxTest.prototype.saveRatings = function (TestIdx) {
 
     // stops the user proceeding if they have not listened to all sentences
-    if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
+    if (this.TestState.WasListenedTo[TestIdx]["A"] === false || this.TestState.WasListenedTo[TestIdx]["B"] === false) {
         $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
         return false;
     }
@@ -1473,7 +1503,7 @@ PrefTest.prototype.readRatings = function (TestIdx) {
 PrefTest.prototype.saveRatings = function (TestIdx) {
 
     // stops the user proceeding if they have not listened to all sentences
-    if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
+    if (this.TestState.WasListenedTo[TestIdx]["A"] === false || this.TestState.WasListenedTo[TestIdx]["B"] === false) {
         $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
         return false;
     }
@@ -1648,7 +1678,7 @@ ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
     var ProgressComplete = true;
     for (var i in this.TestState.FileMappings[TestIdx]) {
         var relID = this.TestState.FileMappings[TestIdx][i];
-        if (this.complete[relID] == undefined) {
+        if (this.TestState.WasListenedTo[TestIdx][relID] === false) {
             ProgressComplete = false;
         }
     }
