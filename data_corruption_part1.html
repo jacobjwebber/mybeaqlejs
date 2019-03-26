@@ -35,7 +35,7 @@
             testHandle = new MushraTest(TestConfig);       // <-- MUSHRA test class
             // testHandle = new ForcedChoiceTest(TestConfig); // <-- FORCED CHOICE test class
             // testHandle = new AbxTest(TestConfig);          // <-- ABX test class
-            // testHandle = new AbTest(TestConfig);           // <-- AB test class
+            // testHandle = new PrefTest(TestConfig);           // <-- AB test class
 
             $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
         };
@@ -66,17 +66,19 @@
         <!-- edit here if you want to change the welcome message  and instructions -->
 
         <div style="text-align:left">
-            Thanks for your interest in participating in the listening test. The overall test will roughly take 15 minutes. Please take the time and carefully rate every item.
-            <!-- The first half of the test will take roughly 20 minutes. Please take your time and listen to all audio clips fully. In this test you will hear 4 variations of a sentence on each screen. -->
+            Thanks for your interest and for participating in our listening test. This part of the test will take roughly 15 minutes. Please take your time and listen to all audio clips fully. You will be presented with 6 variations of a sentence on each screen, along with a more natural reference audio clip.
             <br />
             <br />
             <big><b>Instructions</b></big>
             <ul>
-                <li>Each sentence is being said with a different emotion. Your task is to label each sentence with an emotion.</li>
-                <li>Listen to all 4 sentences before beginning to choose labels.</li>
-                <li>Pay attention to the delivery of the sentence and label each sentence with the closest emotion.</li>
-                <li>It is more important that you choose the emotion you think is closest as opposed to trying to get everything correct. If you cannot distinguish between two sentences, then you can choose the same emotion more than once.</li>
+                <li>Begin by listening to the reference clip (the one without a rating slider).</li>
+                <li>Listen to all audio clips on a screen before beginning to determine your ratings.</li>
+                <li>Your task is to <strong>rate the naturalness</strong> of each clip, relative to the reference audio at the top.</li>
+                <li>The reference clip will also be present among the remaining audio clips, but it will be hidden.</li>
+                <li>You must rate the system you believe to be most natural with a score of 100, ideally this will correspond with the reference clip at the top.</li>
+                <li>If you believe multiple audio clips sound most natural, then you can rate all such clips as 100.</li>
             </ul>
+            The instructions will also be present at the bottom of each page, scroll down during the test if you need to recap anything.
         </div>
         <br />
         <br />
@@ -162,7 +164,7 @@
             <input id="ChkAutoReturn" type="checkbox" value="Auto Return" /><label for="ChkAutoReturn">Auto Return</label>
         </div>
         
-        <div id="Volume">
+        <div id="Volume" style="display: none">
             Volume
             <div id="VolumeSlider"></div>
         </div>
@@ -176,10 +178,12 @@
         <div style="text-align:left">
             <big><b>Instructions</b></big>
             <ul>
-                <li>Each sentence is being said with a different emotion. Your task is to label each sentence with an emotion.</li>
-                <li>Listen to all 4 sentences before beginning to choose labels.</li>
-                <li>Pay attention to the delivery of the sentence and label each sentence with the closest emotion.</li>
-                <li>It is more important that you choose the emotion you think is closest as opposed to trying to get everything correct. If you cannot distinguish between two sentences, then you can choose the same emotion more than once.</li>
+                <li>Begin by listening to the reference clip (the one without a rating slider).</li>
+                <li>Listen to all audio clips on a screen before beginning to determine your ratings.</li>
+                <li>Your task is to <strong>rate the naturalness</strong> of each clip, relative to the reference audio at the top.</li>
+                <li>The reference clip will also be present among the remaining audio clips, but it will be hidden.</li>
+                <li>You must rate the system you believe to be most natural with a score of 100, ideally this will correspond with the reference clip at the top.</li>
+                <li>If you believe multiple audio clips sound most natural, then you can rate all such clips as 100.</li>
             </ul>
         </div>
     </div>

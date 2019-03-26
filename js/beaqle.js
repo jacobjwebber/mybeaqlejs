@@ -1035,6 +1035,21 @@ MushraTest.prototype.readRatings = function (TestIdx) {
 // ###################################################################
 // save ratings to TestState object
 MushraTest.prototype.saveRatings = function (TestIdx) {
+
+    var ProgressComplete = true;
+    for (var i in this.TestState.FileMappings[TestIdx]) {
+        var relID = this.TestState.FileMappings[TestIdx][i];
+        if (this.complete[relID] == undefined) {
+            ProgressComplete = false;
+        }
+    }
+
+    // stops the user proceeding if they have not listened to all sentences
+    if (ProgressComplete === false) {
+        $.alert("Please listen to all sentences fully before completing the task", "Warning!");
+        return false;
+    }
+
     var ratings = new Object();
     $(".rateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
@@ -1097,9 +1112,6 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         row = tab.insertRow(-1);
         row.setAttribute("height","5"); 
 
-        var rateMin = this.TestConfig.RateMinValue;
-        var rateMax = this.TestConfig.RateMaxValue;
-            
         // add test items
         for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) { 
             
@@ -1298,6 +1310,17 @@ AbxTest.prototype.readRatings = function (TestIdx) {
 
 AbxTest.prototype.saveRatings = function (TestIdx) {
 
+    // stops the user proceeding if they have not listened to all sentences
+    if (this.complete["A"] == undefined || this.complete["B"] == undefined) {
+        $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
+        return false;
+    }
+
+    if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
+        $.alert("You must select a preference!", "Warning!")
+        return false;
+    }
+
     if ($("#selectA").prop("checked")) {
         this.TestState.Ratings[TestIdx] = "A";
     } else if ($("#selectB").prop("checked")) {
@@ -1342,7 +1365,6 @@ AbxTest.prototype.formatResults = function () {
 
     resultstring += tab.outerHTML;
 
-    resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestConfig.Testsets.length*100).toFixed(2) + " %</p>";
     return resultstring;
 }
 
@@ -1654,7 +1676,6 @@ ForcedChoiceTest.prototype.saveRatings = function (TestIdx) {
 ForcedChoiceTest.prototype.formatResults = function () {
 
     var resultstring = "";
-
 
     var numCorrect = 0;
     var numWrong   = 0;
