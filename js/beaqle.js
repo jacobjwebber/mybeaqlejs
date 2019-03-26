@@ -657,7 +657,7 @@ $.extend({ alert: function (message, title) {
         this.createTestDOM(TestIdx);
 
         // set current test name
-        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
+        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " Screen " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length);
         $('#TestHeading').show();
 
         // set current test sentence
@@ -1041,10 +1041,12 @@ MushraTest.prototype.readRatings = function (TestIdx) {
 MushraTest.prototype.saveRatings = function (TestIdx) {
 
     var ProgressComplete = true;
+    var Missing = '';
     for (var i in this.TestState.FileMappings[TestIdx]) {
         var relID = this.TestState.FileMappings[TestIdx][i];
         if (this.complete[relID] == undefined) {
             ProgressComplete = false;
+            Missing += relID + ', '
         }
     }
 
