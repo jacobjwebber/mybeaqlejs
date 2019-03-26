@@ -1,7 +1,7 @@
 // configure the test here
 var TestConfig = {
   "TestName": "Listening test – part 1",
-  "RateScalePng": "img/scale_abs.png",
+  "RateScalePng": "img/scale_real.png",
   "RateScaleBgPng": "img/scale_abs_background.png",
   "RateMinValue": 0,
   "RateMaxValue": 100,
@@ -11,7 +11,7 @@ var TestConfig = {
   "LoopByDefault": false,
   "EnableABLoop": false,
   "EnableOnlineSubmission": true,
-  "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+  "BeaqleServiceURL": "/s1653112/beaqlejs/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "RandomizeTestOrder": false,
   "MaxTestsPerRun": 100,
@@ -30,7 +30,8 @@ var TestConfig = {
             "g_100clean": "g_100clean/LJ050-0001.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0001.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0001.wav",
-        }
+        },
+      "Annotation": "Hey guys"
     },
     {
       "Name": "Screen 2",
@@ -43,7 +44,8 @@ var TestConfig = {
             "g_100clean": "g_100clean/LJ050-0002.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0002.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0002.wav",
-       }
+       },
+      "Annotation": "Hey guys"
     },
   ]
 }

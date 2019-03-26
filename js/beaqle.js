@@ -660,6 +660,10 @@ $.extend({ alert: function (message, title) {
         $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
         $('#TestHeading').show();
 
+        // set current test sentence
+        $('#TestSentence').html(this.TestConfig.Testsets[TestIdx].Annotation);
+        $('#TestSentence').show();
+
         // hide everything instead of load animation
         $('#TestIntroduction').hide();
         $('#TestControls').hide();
