@@ -22,7 +22,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0233.wav",
             "Reference": "copysynth_ssrn500/LJ050-0233.wav",
-            "g50_clean": "g50_clean/LJ050-0233.wav",
+            "g_50clean": "g_50clean/LJ050-0233.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0233.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0233.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0233.wav",
@@ -36,7 +36,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0123.wav",
             "Reference": "copysynth_ssrn500/LJ050-0123.wav",
-            "g50_clean": "g50_clean/LJ050-0123.wav",
+            "g_50clean": "g_50clean/LJ050-0123.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0123.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0123.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0123.wav",
@@ -50,7 +50,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0278.wav",
             "Reference": "copysynth_ssrn500/LJ050-0278.wav",
-            "g50_clean": "g50_clean/LJ050-0278.wav",
+            "g_50clean": "g_50clean/LJ050-0278.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0278.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0278.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0278.wav",
@@ -64,7 +64,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0093.wav",
             "Reference": "copysynth_ssrn500/LJ050-0093.wav",
-            "g50_clean": "g50_clean/LJ050-0093.wav",
+            "g_50clean": "g_50clean/LJ050-0093.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0093.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0093.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0093.wav",
@@ -78,7 +78,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0038.wav",
             "Reference": "copysynth_ssrn500/LJ050-0038.wav",
-            "g50_clean": "g50_clean/LJ050-0038.wav",
+            "g_50clean": "g_50clean/LJ050-0038.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0038.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0038.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0038.wav",
@@ -92,7 +92,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0099.wav",
             "Reference": "copysynth_ssrn500/LJ050-0099.wav",
-            "g50_clean": "g50_clean/LJ050-0099.wav",
+            "g_50clean": "g_50clean/LJ050-0099.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0099.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0099.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0099.wav",
@@ -106,7 +106,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0231.wav",
             "Reference": "copysynth_ssrn500/LJ050-0231.wav",
-            "g50_clean": "g50_clean/LJ050-0231.wav",
+            "g_50clean": "g_50clean/LJ050-0231.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0231.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0231.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0231.wav",
@@ -120,7 +120,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0221.wav",
             "Reference": "copysynth_ssrn500/LJ050-0221.wav",
-            "g50_clean": "g50_clean/LJ050-0221.wav",
+            "g_50clean": "g_50clean/LJ050-0221.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0221.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0221.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0221.wav",
@@ -134,7 +134,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0220.wav",
             "Reference": "copysynth_ssrn500/LJ050-0220.wav",
-            "g50_clean": "g50_clean/LJ050-0220.wav",
+            "g_50clean": "g_50clean/LJ050-0220.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0220.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0220.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0220.wav",
@@ -148,7 +148,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0108.wav",
             "Reference": "copysynth_ssrn500/LJ050-0108.wav",
-            "g50_clean": "g50_clean/LJ050-0108.wav",
+            "g_50clean": "g_50clean/LJ050-0108.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0108.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0108.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0108.wav",
@@ -162,7 +162,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0039.wav",
             "Reference": "copysynth_ssrn500/LJ050-0039.wav",
-            "g50_clean": "g50_clean/LJ050-0039.wav",
+            "g_50clean": "g_50clean/LJ050-0039.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0039.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0039.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0039.wav",
@@ -176,7 +176,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0240.wav",
             "Reference": "copysynth_ssrn500/LJ050-0240.wav",
-            "g50_clean": "g50_clean/LJ050-0240.wav",
+            "g_50clean": "g_50clean/LJ050-0240.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0240.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0240.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0240.wav",
@@ -190,7 +190,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0036.wav",
             "Reference": "copysynth_ssrn500/LJ050-0036.wav",
-            "g50_clean": "g50_clean/LJ050-0036.wav",
+            "g_50clean": "g_50clean/LJ050-0036.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0036.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0036.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0036.wav",
@@ -204,7 +204,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0278.wav",
             "Reference": "copysynth_ssrn500/LJ050-0278.wav",
-            "g50_clean": "g50_clean/LJ050-0278.wav",
+            "g_50clean": "g_50clean/LJ050-0278.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0278.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0278.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0278.wav",
@@ -218,7 +218,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0058.wav",
             "Reference": "copysynth_ssrn500/LJ050-0058.wav",
-            "g50_clean": "g50_clean/LJ050-0058.wav",
+            "g_50clean": "g_50clean/LJ050-0058.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0058.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0058.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0058.wav",
@@ -232,7 +232,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0006.wav",
             "Reference": "copysynth_ssrn500/LJ050-0006.wav",
-            "g50_clean": "g50_clean/LJ050-0006.wav",
+            "g_50clean": "g_50clean/LJ050-0006.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0006.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0006.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0006.wav",
@@ -246,7 +246,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0156.wav",
             "Reference": "copysynth_ssrn500/LJ050-0156.wav",
-            "g50_clean": "g50_clean/LJ050-0156.wav",
+            "g_50clean": "g_50clean/LJ050-0156.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0156.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0156.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0156.wav",
@@ -260,7 +260,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0212.wav",
             "Reference": "copysynth_ssrn500/LJ050-0212.wav",
-            "g50_clean": "g50_clean/LJ050-0212.wav",
+            "g_50clean": "g_50clean/LJ050-0212.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0212.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0212.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0212.wav",
@@ -274,7 +274,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0122.wav",
             "Reference": "copysynth_ssrn500/LJ050-0122.wav",
-            "g50_clean": "g50_clean/LJ050-0122.wav",
+            "g_50clean": "g_50clean/LJ050-0122.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0122.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0122.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0122.wav",
@@ -288,7 +288,7 @@ var TestConfig = {
         "Files": {
             "g_100clean": "g_100clean/LJ050-0026.wav",
             "Reference": "copysynth_ssrn500/LJ050-0026.wav",
-            "g50_clean": "g50_clean/LJ050-0026.wav",
+            "g_50clean": "g_50clean/LJ050-0026.wav",
             "g_50clean_50add5words": "g_50clean_50add5words/LJ050-0026.wav",
             "g_50clean_50asr34.8wer": "g_50clean_50asr34.8wer/LJ050-0026.wav",
             "g_50clean_50del5words": "g_50clean_50del5words/LJ050-0026.wav",

@@ -661,7 +661,7 @@ $.extend({ alert: function (message, title) {
         $('#TestHeading').show();
 
         // set current test sentence
-        $('#TestSentence').html(this.TestConfig.Testsets[TestIdx].Annotation);
+        $('#TestSentence').html('"' + this.TestConfig.Testsets[TestIdx].Annotation + '"');
         $('#TestSentence').show();
 
         // hide everything instead of load animation
