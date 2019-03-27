@@ -483,6 +483,8 @@ $.extend({ alert: function (message, title) {
         $('#BtnNextTest').on('click', $.proxy(handlerObject.nextTest, handlerObject));
         $('#BtnPrevTest').button();
         $('#BtnPrevTest').on('click', $.proxy(handlerObject.prevTest, handlerObject));
+        $('#BtnReloadTest').button();
+        $('#BtnReloadTest').on('click', $.proxy(handlerObject.reloadTest, handlerObject));
         $('#BtnStartTest').button();
         $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-signal-diag' }});     
         $('#BtnDownloadData').button({ icons: { primary: 'ui-icon-arrowthickstop-1-s' }});
@@ -641,6 +643,27 @@ $.extend({ alert: function (message, title) {
             this.TestState.CurrentTest = this.TestState.CurrentTest-1;
         	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
         }
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.reloadTest = function() {
+
+        // Currently this method is only visible on the load screen in case it breaks (on Chrome).
+        // To add this as a general reloading function during listening and rating on a screen, the saveRatings
+        // method must be more configurable about the content of `this.TestState.WasListenedTo[TestIdx]`.
+
+        // this.pauseAllAudios();
+
+        // // save ratings from the test
+        // if (this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest])==false)
+        //     return;
+
+        // // stop time measurement
+        // var stopTime = new Date().getTime();
+        // this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
+
+        // reload this test
+        this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
     // ###################################################################    
