@@ -1564,7 +1564,7 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
             } else {
                this.TestState.FileMappings[TestIdx].X = "B";
             }                
-        }	
+        }
             
         // add reference
         fileID = "A";
@@ -1727,7 +1727,12 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
                this.TestState.FileMappings[TestIdx].A = "A";
                this.TestState.FileMappings[TestIdx].B = "B";
             }                
-        }	
+        }
+
+        if (!this.TestState.WasListenedTo[TestIdx]) {
+            // The order in which we add to this object indicates the order given in the alert.
+            this.TestState.WasListenedTo[TestIdx] = {"A": false, "B": false};
+        }
 
         // add reference
         fileID = this.TestState.FileMappings[TestIdx].A;
@@ -1754,7 +1759,7 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
         cell[1].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";  
         cell[2] = row[1].insertCell(-1);
         cell[3] = row[1].insertCell(-1);
-        cell[3].innerHTML = "Please select the item which you prefer!";
+        cell[3].innerHTML = this.TestConfig.RatingText;
 
         // add spacing
         row = tab.insertRow(-1);
@@ -1786,8 +1791,17 @@ PrefTest.prototype.saveRatings = function (TestIdx) {
 
     // stops the user proceeding if they have not listened to all sentences
     if (this.TestState.WasListenedTo[TestIdx]["A"] === false || this.TestState.WasListenedTo[TestIdx]["B"] === false) {
-        $.alert("Please listen to both paragraphs fully before completing the task", "Warning!");
+        var Missing = new Array();
+        if (this.TestState.WasListenedTo[TestIdx]["A"] === false) {
+            Missing.push("- A")
+        }
+        if (this.TestState.WasListenedTo[TestIdx]["B"] === false) {
+            Missing.push("- B")
+        }
+
+        $.alert("Please complete this task before moving on.<br><br>Clips that have not been fully listened to:<br>" + Missing.join('<br>'), "Warning!");
         return false;
+
     }
 
     if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
