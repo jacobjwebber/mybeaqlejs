@@ -98,7 +98,9 @@ body {
 }
 
 #TestTable {
-    border-spacing:10px
+    border-spacing:10px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #TestTable  td {
