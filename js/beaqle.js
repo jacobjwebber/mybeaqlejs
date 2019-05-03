@@ -681,7 +681,9 @@ $.extend({ alert: function (message, title) {
         this.createTestDOM(TestIdx);
 
         // set current test name
-        var heading = "Screen " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length;
+        var percentage = parseInt((this.TestState.CurrentTest+1) / this.TestState.TestSequence.length * 100);
+        var heading = "Progress: " + percentage + "%";
+        // var heading = "Screen " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length;
         if (this.TestConfig.ShowScreenName) {
             heading = this.TestConfig.Testsets[TestIdx].Name + " " + heading;
         }
