@@ -1948,12 +1948,15 @@ RelativePrefTest.prototype.createFileMapping = function (TestIdx) {
 RelativePrefTest.prototype.createTestDOM = function (TestIdx) {
 
         // clear old test table
-        if ($('#TableContainer > div')) {
-            $('#TableContainer > div').remove();
+        if ($('#TableContainer > div#TableDiv')) {
+            $('#TableContainer > div#TableDiv').remove();
+        } else {
+
         }
 
         // create new test table
         var div = document.createElement('div');
+        div.setAttribute('id', 'TableDiv')
 
         var instructions = div.appendChild(document.createElement('span'));
         instructions.innerHTML = this.TestConfig.RatingText;
