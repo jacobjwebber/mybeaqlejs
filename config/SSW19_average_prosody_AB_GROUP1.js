@@ -1,7 +1,7 @@
 // configure the test here
 var TestConfig = {
   "TestName": "Pairwise variation",
-  "RatingText": "Choose which sentence has more varied intonation",
+  "RatingText": "Choose which sentence has <strong>more varied intonation</strong>",
   "LoopByDefault": false,
   "ShowFileIDs": false,
   "ShowScreenName": false,
@@ -10,7 +10,7 @@ var TestConfig = {
   "RequirePreference": true,
   "EnableOnlineSubmission": true,
   "RandomizeTestOrder": true,
-  "MaxTestsPerRun": 10000,
+  "MaxTestsPerRun": 525,
   "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "AudioRoot": "audio/SSW19_average_prosody/",
