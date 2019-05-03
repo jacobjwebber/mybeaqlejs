@@ -16,7 +16,7 @@ var TestConfig = {
   "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "RandomizeTestOrder": true,
-  "MaxTestsPerRun": 2,
+  "MaxTestsPerRun": 10000,
   "RequireMaxRating": false,
   "AudioRoot": "audio/SSW19_average_prosody/",
   "Testsets": [
