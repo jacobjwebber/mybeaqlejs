@@ -13,7 +13,7 @@ var TestConfig = {
   "LoopByDefault": false,
   "EnableABLoop": false,
   "EnableOnlineSubmission": true,
-  "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+  "BeaqleServiceURL": "/s1653112/beaqlejs/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "RandomizeTestOrder": true,
   "MaxTestsPerRun": 10000,

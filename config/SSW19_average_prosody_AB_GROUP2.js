@@ -11,7 +11,7 @@ var TestConfig = {
   "EnableOnlineSubmission": true,
   "RandomizeTestOrder": true,
   "MaxTestsPerRun": 10000,
-  "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+  "BeaqleServiceURL": "/s1653112/beaqlejs/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
   "AudioRoot": "audio/SSW19_average_prosody/",
   "Testsets": [
