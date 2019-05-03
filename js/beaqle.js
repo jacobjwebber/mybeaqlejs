@@ -681,7 +681,11 @@ $.extend({ alert: function (message, title) {
         this.createTestDOM(TestIdx);
 
         // set current test name
-        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " Screen " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length);
+        var heading = "Screen " + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length;
+        if (this.TestConfig.ShowScreenName) {
+            heading = this.TestConfig.Testsets[TestIdx].Name + " " + heading;
+        }
+        $('#TestHeading').html(heading);
         $('#TestHeading').show();
 
         // set current test sentence
@@ -847,7 +851,7 @@ $.extend({ alert: function (message, title) {
         // highlight active slider and button
         $(".rateSlider[rel="+id+"]").parent().css('background-color', '#D5E5F6');
         $(".playButton[rel="+id+"]").addClass('playButton-active');
-        
+
         this.current_relID = id;
 
         this.audioPool.play(id);
@@ -1363,11 +1367,16 @@ MOSTest.prototype.saveRatings = function (TestIdx) {
         var pos = $(this).attr('id').lastIndexOf('slider');
         var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
 
-        ratings[fileNum] = $(this).slider( "option", "value" );
+        ratings[fileNum] = $(this).slider( "option", "value");
     });
 
     var MaxRatingFound = false;
     for(var prop in ratings) {
+        if (ratings[prop] < this.TestConfig.RateMinValue || ratings[prop] > this.TestConfig.RateMaxValue) {
+            $.alert("Please complete this task before moving on.<br><br>You must provide a rating for the clip", "Warning!")
+            return false;
+        }
+
         if(ratings[prop] === this.TestConfig.RateMaxValue) {
             MaxRatingFound = true;
         }
@@ -1416,9 +1425,9 @@ MOSTest.prototype.createTestDOM = function (TestIdx) {
         row[0]  = tab.insertRow(-1);
         cell[0] = row[0].insertCell(-1);
         cell[1] = row[0].insertCell(-1);
+        // cell[2] = row[0].insertCell(-1);
         cell[2] = row[0].insertCell(-1);
-        cell[3] = row[0].insertCell(-1);
-        cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";
+        cell[2].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";
 
         // add spacing
         row[1] = tab.insertRow(-1);
@@ -1430,19 +1439,20 @@ MOSTest.prototype.createTestDOM = function (TestIdx) {
             var fileID = this.TestState.FileMappings[TestIdx][i];
             var relID = fileID;
 
-            row[i+2]  = tab.insertRow(-1);
-            cell[0] = row[i+2].insertCell(-1);
-            cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
-            cell[1] = row[i+2].insertCell(-1);
-            cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
-            cell[2] = row[i+2].insertCell(-1);
-            cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
-            cell[3] = row[i+2].insertCell(-1);
             var fileIDstr = "";
             if (this.TestConfig.ShowFileIDs) {
-                    fileIDstr = fileID;
+                fileIDstr = " (" + fileID + ")";
             }
-            cell[3].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'>"+fileIDstr+"</div>";
+
+            row[i+2]  = tab.insertRow(-1);
+            cell[0] = row[i+2].insertCell(-1);
+            cell[0].innerHTML = "<span class='testItem'>Test Item " + (i+1) + fileIDstr + "</span>";
+            cell[1] = row[i+2].insertCell(-1);
+            cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
+            // cell[2] = row[i+2].insertCell(-1);
+            // cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+            cell[2] = row[i+2].insertCell(-1);
+            cell[2].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'></div>";
 
             this.addAudio(TestIdx, fileID, relID);
 
@@ -1699,6 +1709,29 @@ PrefTest.prototype = new ListeningTest();
 PrefTest.prototype.constructor = PrefTest;
 
 
+// create random mapping to test files
+PrefTest.prototype.createFileMapping = function (TestIdx) {
+    var NumFiles = $.map(this.TestConfig.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
+    if (NumFiles !== 2) alert('Too many files for preference test');
+    var fileMapping = new Array(NumFiles);
+
+    var choices = ["A", "B"];
+    $.each(this.TestConfig.Testsets[TestIdx].Files, function(index, value) {
+
+        do {
+            var RandNumber = Math.floor(Math.random() * choices.length);
+            if (RandNumber>NumFiles-1) RandNumber = NumFiles - 1;
+
+            var RandFileName = choices[RandNumber];
+        } while (typeof fileMapping[RandFileName] !== 'undefined');
+
+        if (RandFileName<0) alert(fileMapping);
+        fileMapping[RandFileName] = index;
+    });
+
+    this.TestState.FileMappings[TestIdx] = fileMapping;
+}
+
 // implement specific code
 PrefTest.prototype.createTestDOM = function (TestIdx) {
 
@@ -1718,32 +1751,40 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
 
         // create random file mapping if not yet done
         if (!this.TestState.FileMappings[TestIdx]) {
-           this.TestState.FileMappings[TestIdx] = {"A": "", "B": ""};
-           var RandFileNumber = Math.random();
-           if (this.TestConfig.RandomizeFileOrder && RandFileNumber>0.5) {
-               this.TestState.FileMappings[TestIdx].A = "B";
-               this.TestState.FileMappings[TestIdx].B = "A";
-           } else {
-               this.TestState.FileMappings[TestIdx].A = "A";
-               this.TestState.FileMappings[TestIdx].B = "B";
-            }                
+                this.createFileMapping(TestIdx);
         }
 
         if (!this.TestState.WasListenedTo[TestIdx]) {
             // The order in which we add to this object indicates the order given in the alert.
-            this.TestState.WasListenedTo[TestIdx] = {"A": false, "B": false};
+            this.TestState.WasListenedTo[TestIdx] = new Object();
+
+            var fileID_A = this.TestState.FileMappings[TestIdx].A;
+            this.TestState.WasListenedTo[TestIdx][fileID_A] = false;
+
+            var fileID_B = this.TestState.FileMappings[TestIdx].B;
+            this.TestState.WasListenedTo[TestIdx][fileID_B] = false;
         }
 
         // add reference
         fileID = this.TestState.FileMappings[TestIdx].A;
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
-        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
+
+        var fileIDstr = "A";
+        if (this.TestConfig.ShowFileIDs) {
+            fileIDstr = fileID;
+        }
+        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">'+fileIDstr+'</button>';
         this.addAudio(TestIdx, fileID, fileID);
 
         fileID = this.TestState.FileMappings[TestIdx].B;
         cell[1] = row.insertCell(-1);
-        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
+
+        fileIDstr = "B";
+        if (this.TestConfig.ShowFileIDs) {
+            fileIDstr = fileID;
+        }
+        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">'+fileIDstr+'</button>';
         this.addAudio(TestIdx, fileID, fileID);
 
         cell[2] = row.insertCell(-1);
@@ -1780,9 +1821,9 @@ PrefTest.prototype.createTestDOM = function (TestIdx) {
 
 PrefTest.prototype.readRatings = function (TestIdx) {
 
-    if (this.TestState.Ratings[TestIdx] === "A") {
+    if (this.TestState.Ratings[TestIdx] === this.TestState.FileMappings[TestIdx].A) {
         $("#selectA").prop("checked", true);
-    } else if (this.TestState.Ratings[TestIdx] === "B") {
+    } else if (this.TestState.Ratings[TestIdx] === this.TestState.FileMappings[TestIdx].B) {
         $("#selectB").prop("checked", true);
     }
 }
@@ -1790,18 +1831,28 @@ PrefTest.prototype.readRatings = function (TestIdx) {
 PrefTest.prototype.saveRatings = function (TestIdx) {
 
     // stops the user proceeding if they have not listened to all sentences
-    if (this.TestState.WasListenedTo[TestIdx]["A"] === false || this.TestState.WasListenedTo[TestIdx]["B"] === false) {
+    var fileID_A = this.TestState.FileMappings[TestIdx].A;
+    var fileID_B = this.TestState.FileMappings[TestIdx].B;
+    if (this.TestState.WasListenedTo[TestIdx][fileID_A] === false || this.TestState.WasListenedTo[TestIdx][fileID_B] === false) {
         var Missing = new Array();
-        if (this.TestState.WasListenedTo[TestIdx]["A"] === false) {
-            Missing.push("- A")
+
+        if (this.TestState.WasListenedTo[TestIdx][fileID_A] === false) {
+            var fileIDstr = "A";
+            if (this.TestConfig.ShowFileIDs) {
+                fileIDstr = fileID_A;
+            }
+            Missing.push("- " + fileIDstr);
         }
-        if (this.TestState.WasListenedTo[TestIdx]["B"] === false) {
-            Missing.push("- B")
+        if (this.TestState.WasListenedTo[TestIdx][fileID_B] === false) {
+            var fileIDstr = "B";
+            if (this.TestConfig.ShowFileIDs) {
+                fileIDstr = fileID_B;
+            }
+            Missing.push("- " + fileIDstr);
         }
 
         $.alert("Please complete this task before moving on.<br><br>Clips that have not been fully listened to:<br>" + Missing.join('<br>'), "Warning!");
         return false;
-
     }
 
     if (this.TestConfig.RequirePreference == true && !$("input[name='ItemSelection']:checked").val()) {
@@ -1850,6 +1901,244 @@ PrefTest.prototype.formatResults = function () {
             cell.innerHTML = this.TestState.EvalResults[i].Preference;
 
             // resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n"; 
+        }
+    }
+
+    resultstring += tab.outerHTML + "\n";
+    return resultstring;
+}
+
+
+
+// ###################################################################
+// Preference test main object (modelled after ABX-Test)
+
+// inherit from ListeningTest
+function RelativePrefTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+RelativePrefTest.prototype = new ListeningTest();
+RelativePrefTest.prototype.constructor = PrefTest;
+
+// create random mapping to test files
+RelativePrefTest.prototype.createFileMapping = function (TestIdx) {
+    var NumFiles = $.map(this.TestConfig.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
+    if (NumFiles !== 2) alert('Too many files for preference test');
+    var fileMapping = new Array(NumFiles);
+
+    var choices = ["A", "B"];
+    $.each(this.TestConfig.Testsets[TestIdx].Files, function(index, value) {
+
+        do {
+            var RandNumber = Math.floor(Math.random() * choices.length);
+            if (RandNumber>NumFiles-1) RandNumber = NumFiles - 1;
+
+            var RandFileName = choices[RandNumber];
+        } while (typeof fileMapping[RandFileName] !== 'undefined');
+
+        if (RandFileName<0) alert(fileMapping);
+        fileMapping[RandFileName] = index;
+    });
+
+    this.TestState.FileMappings[TestIdx] = fileMapping;
+}
+
+
+// implement specific code
+RelativePrefTest.prototype.createTestDOM = function (TestIdx) {
+
+        // clear old test table
+        if ($('#TableContainer > div')) {
+            $('#TableContainer > div').remove();
+        }
+
+        // create new test table
+        var div = document.createElement('div');
+
+        var instructions = div.appendChild(document.createElement('span'));
+        instructions.innerHTML = this.TestConfig.RatingText;
+
+        div.appendChild(document.createElement('hr'));
+
+        var tab = div.appendChild(document.createElement('table'));
+        tab.setAttribute('id','TestTable');
+
+        var fileID = "";
+        var row = new Array();
+        var cell = new Array();
+
+        // create random file mapping if not yet done
+        if (!this.TestState.FileMappings[TestIdx]) {
+                this.createFileMapping(TestIdx);
+        }
+
+        if (!this.TestState.WasListenedTo[TestIdx]) {
+            // The order in which we add to this object indicates the order given in the alert.
+            this.TestState.WasListenedTo[TestIdx] = new Object();
+
+            var fileID_A = this.TestState.FileMappings[TestIdx].A;
+            this.TestState.WasListenedTo[TestIdx][fileID_A] = false;
+
+            var fileID_B = this.TestState.FileMappings[TestIdx].B;
+            this.TestState.WasListenedTo[TestIdx][fileID_B] = false;
+        }
+
+        row[0]  = tab.insertRow(-1);
+        cell[0] = row[0].insertCell(-1);
+        cell[0].innerHTML = "<input type='radio' name='ItemSelectionA' id='selectB'/>";
+
+        fileID = this.TestState.FileMappings[TestIdx].A;
+        var fileIDstr = "A";
+        if (this.TestConfig.ShowFileIDs) {
+            fileIDstr = fileID;
+        }
+        cell[1] = row[0].insertCell(-1);
+        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">Play '+fileIDstr+'</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        cell[2] = row[0].insertCell(-1);
+        cell[2].innerHTML = "<input type='radio' name='ItemSelectionA' id='selectA'/>";
+        // cell[3] = row[0].insertCell(-1);
+        // cell[3].innerHTML = "<button class='stopButton'>Stop</button>";
+
+        // cell[4] = row[0].insertCell(-1);
+        // cell[4].innerHTML = "Press buttons to start/stop playback.";
+
+        row[1]  = tab.insertRow(-1);
+        cell[0] = row[1].insertCell(-1);
+        cell[0].innerHTML = "<input type='radio' name='ItemSelectionB' id='selectA'/>";
+
+        fileID = this.TestState.FileMappings[TestIdx].B;
+        cell[1] = row[1].insertCell(-1);
+        fileIDstr = "B";
+        if (this.TestConfig.ShowFileIDs) {
+            fileIDstr = fileID;
+        }
+        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">Play '+fileIDstr+'</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        cell[2] = row[1].insertCell(-1);
+        cell[2].innerHTML = "<input type='radio' name='ItemSelectionB' id='selectB'/>";
+        // cell[3] = row[1].insertCell(-1);
+
+        row[2]  = tab.insertRow(-1);
+        cell[0] = row[2].insertCell(-1);
+        cell[0].innerHTML = "More flat";
+        cell[1] = row[2].insertCell(-1);
+        cell[2] = row[2].insertCell(-1);
+        cell[2].innerHTML = "More varied";
+
+        // add spacing
+        row = tab.insertRow(-1);
+        row.setAttribute("height","5");
+
+        // append the created table to the DOM
+        $('#TableContainer').append(div);
+
+        // Link the two sets of radio buttons
+        $(function(){
+            $('input[type=radio]#selectA').change(function(){
+                $('input[type=radio]#selectA').attr('checked', true);
+            });
+        });
+        $(function(){
+            $('input[type=radio]#selectB').change(function(){
+                $('input[type=radio]#selectB').attr('checked', true);
+            });
+        });
+
+        // randomly preselect one radio button
+        if (typeof this.TestState.Ratings[TestIdx] == 'undefined') {
+            /*if (Math.random() > 0.5) {
+               $("#selectB").prop("checked", true);
+            } else {
+               $("#selectA").prop("checked", true);
+            }*/
+        }
+}
+
+RelativePrefTest.prototype.readRatings = function (TestIdx) {
+
+    if (this.TestState.Ratings[TestIdx] === this.TestState.FileMappings[TestIdx].A) {
+        $("#selectA").prop("checked", true);
+    } else if (this.TestState.Ratings[TestIdx] === this.TestState.FileMappings[TestIdx].B) {
+        $("#selectB").prop("checked", true);
+    }
+}
+
+RelativePrefTest.prototype.saveRatings = function (TestIdx) {
+
+    // stops the user proceeding if they have not listened to all sentences
+    var fileID_A = this.TestState.FileMappings[TestIdx].A;
+    var fileID_B = this.TestState.FileMappings[TestIdx].B;
+    if (this.TestState.WasListenedTo[TestIdx][fileID_A] === false || this.TestState.WasListenedTo[TestIdx][fileID_B] === false) {
+        var Missing = new Array();
+
+        if (this.TestState.WasListenedTo[TestIdx][fileID_A] === false) {
+            var fileIDstr = "A";
+            if (this.TestConfig.ShowFileIDs) {
+                fileIDstr = fileID_A;
+            }
+            Missing.push("- " + fileIDstr);
+        }
+        if (this.TestState.WasListenedTo[TestIdx][fileID_B] === false) {
+            var fileIDstr = "B";
+            if (this.TestConfig.ShowFileIDs) {
+                fileIDstr = fileID_B;
+            }
+            Missing.push("- " + fileIDstr);
+        }
+
+        $.alert("Please complete this task before moving on.<br><br>Clips that have not been fully listened to:<br>" + Missing.join('<br>'), "Warning!");
+        return false;
+    }
+
+    if (this.TestConfig.RequirePreference == true && !$("input[type='radio']:checked").val()) {
+        $.alert("You must select a preference!", "Warning!")
+        return false;
+    }
+
+    if ($("#selectA").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = this.TestState.FileMappings[TestIdx].A;
+    } else if ($("#selectB").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = this.TestState.FileMappings[TestIdx].B;
+    }
+}
+
+RelativePrefTest.prototype.formatResults = function () {
+
+    var resultstring = "";
+    var tab = document.createElement('table');
+    var head = tab.createTHead();
+    var row = head.insertRow(-1);
+    var cell = row.insertCell(-1); cell.innerHTML = "Test Name and ID";
+    cell = row.insertCell(-1);     cell.innerHTML = "presented order";
+    cell = row.insertCell(-1);     cell.innerHTML = "time in ms";
+    cell = row.insertCell(-1);     cell.innerHTML = "chosen preference";
+
+    var numCorrect = 0;
+    var numWrong   = 0;
+
+    // evaluate single tests
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i] = new Object();
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            row  = tab.insertRow(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = this.TestConfig.Testsets[i].Name + "("+this.TestConfig.Testsets[i].TestID+")";
+            cell = row.insertCell(-1);
+
+            this.TestState.EvalResults[i].PresentationOrder = "A=" + this.TestState.FileMappings[i].A + ", B=" + this.TestState.FileMappings[i].B;
+            cell.innerHTML = this.TestState.EvalResults[i].PresentationOrder;
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Runtime;
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Preference = this.TestState.Ratings[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Preference;
+
+            // resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n";
         }
     }
 
