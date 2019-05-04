@@ -131,7 +131,6 @@
             //fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
             //https://code.google.com/p/chromium/issues/detail?id=234779
             $('#'+this.PoolID+' >.audiotags').prop('src', false);
-            $('#'+this.PoolID+' >.audiotags').load();
         }
 
         $('#'+this.PoolID+' >.audiotags').remove();
@@ -670,6 +669,8 @@ $.extend({ alert: function (message, title) {
     // ###################################################################    
     // prepares display to run test with number TestIdx
     ListeningTest.prototype.runTest = function(TestIdx) {
+
+        $('#LoadOverlay > p').remove();
 
         this.pauseAllAudios();
 
