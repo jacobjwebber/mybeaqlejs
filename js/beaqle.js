@@ -131,6 +131,7 @@
             //fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
             //https://code.google.com/p/chromium/issues/detail?id=234779
             $('#'+this.PoolID+' >.audiotags').prop('src', false);
+            $('#'+this.PoolID+' >.audiotags').load();
         }
 
         $('#'+this.PoolID+' >.audiotags').remove();
@@ -483,8 +484,8 @@ $.extend({ alert: function (message, title) {
         $('#BtnNextTest').on('click', $.proxy(handlerObject.nextTest, handlerObject));
         $('#BtnPrevTest').button();
         $('#BtnPrevTest').on('click', $.proxy(handlerObject.prevTest, handlerObject));
-        $('#BtnReloadTest').button();
-        $('#BtnReloadTest').on('click', $.proxy(handlerObject.reloadTest, handlerObject));
+        $('button#BtnReloadTest').button();
+        $('button#BtnReloadTest').on('click', $.proxy(handlerObject.reloadTest, handlerObject));
         $('#BtnStartTest').button();
         $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-signal-diag' }});     
         $('#BtnDownloadData').button({ icons: { primary: 'ui-icon-arrowthickstop-1-s' }});
@@ -1952,8 +1953,6 @@ RelativePrefTest.prototype.createTestDOM = function (TestIdx) {
         // clear old test table
         if ($('#TableContainer > div#TableDiv')) {
             $('#TableContainer > div#TableDiv').remove();
-        } else {
-
         }
 
         // create new test table
