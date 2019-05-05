@@ -652,7 +652,10 @@ $.extend({ alert: function (message, title) {
         // To add this as a general reloading function during listening and rating on a screen, the saveRatings
         // method must be more configurable about the content of `this.TestState.WasListenedTo[TestIdx]`.
 
-        // this.pauseAllAudios();
+        // Reset the audioPool in case playback is broken due to this.
+        this.pauseAllAudios();
+        this.checkBrowserFeatures();
+        this.initAudio();
 
         // // save ratings from the test
         // if (this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest])==false)
