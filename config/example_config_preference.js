@@ -1,13 +1,14 @@
 // configure the test here
 var TestConfig = {
-  "TestName": "Preference Demo Test",
+  "TestName": "Preference Test",
   "LoopByDefault": false,
   "ShowFileIDs": false,
   "ShowResults": true,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
-  "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+  "BeaqleServiceURL": "/s1116548/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
+  "RandomizeTestOrder": true,
   "AudioRoot": "",
   "Testsets": [
     //
