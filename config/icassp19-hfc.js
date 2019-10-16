@@ -2,13 +2,14 @@
 var TestConfig = {
   "TestName": "Preference Test",
   "LoopByDefault": false,
-  "ShowFileIDs": true, //TODO change
+  "ShowFileIDs": false, //TODO change
   "ShowResults": true,
   "EnableABLoop": true,
-  "EnableOnlineSubmission": false,
-  "BeaqleServiceURL": "/s1116548/web_service/beaqleJS_Service.php",
+  "EnableOnlineSubmission": true,
+  "BeaqleServiceURL": "http://homepages.inf.ed.ac.uk/s1116548/web_service/beaqleJS_Service.php",
   "SupervisorContact": "",
-  "RandomizeTestOrder": false, // TODO change
+  "RandomizeTestOrder": true, // TODO change
+  "RandomizeFileOrder": true,
   "AudioRoot": "",
   "Testsets": [
     {
@@ -34,7 +35,8 @@ var TestConfig = {
             "A": "./audio/hfc/combiner_LJ050-0010-raise.wav",
             "B": "./audio/world/world_LJ050-0010-raise.wav"
         }
-    },
+    } ]//,
+    /*
     {
         "Name": "",
         "TestID": "a003",
@@ -1214,3 +1216,4 @@ var TestConfig = {
 ]
 
 }
+*/}

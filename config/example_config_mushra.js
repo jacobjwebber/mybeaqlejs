@@ -23,33 +23,33 @@ var TestConfig = {
       "Name": "Schubert 1",
       "TestID": "id1_1",
       "Files": {
-            "Reference": "audio/schubert_ref.wav",
-            "1": "audio/schubert_1.wav",
-            "2": "audio/schubert_2.wav",
-            "3": "audio/schubert_3.wav",
-            "4": "audio/schubert_anch.wav",
+            "Reference": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+            "1": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
+            "2": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+            "3": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
+            "4": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
         }
     },
     {
       "Name": "Schubert 2",
       "TestID": "id1_2",
       "Files": {
-            "Reference": "audio/schubert_ref.wav",
-            "1": "audio/schubert_1.wav",
-            "2": "audio/schubert_2.wav",
-            "3": "audio/schubert_3.wav",
-            "4": "audio/schubert_anch.wav",
+            "Reference": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
+            "1": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+            "2": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
+            "3": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+            "4": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
         }
     },
     {
       "Name": "Schubert 3",
       "TestID": "id1_3",
       "Files": {
-            "Reference": "audio/schubert_ref.wav",
-            "1": "audio/schubert_1.wav",
-            "2": "audio/schubert_2.wav",
-            "3": "audio/schubert_3.wav",
-            "4": "audio/schubert_anch.wav",
+            "Reference": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+            "1": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
+            "2": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+            "3": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
+            "4": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
         }
     },
     //    
@@ -57,11 +57,11 @@ var TestConfig = {
        "Name": "Castanets",
        "TestID": "id2_1",
        "Files": {
-            "Reference": "audio/castanets_ref.wav",
-            "1": "audio/castanets_1.wav",
-            "2": "audio/castanets_2.wav",
-            "3": "audio/castanets_3.wav",
-            "4": "audio/castanets_anch.wav",
+            "Reference": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
+            "1": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+            "2": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
+            "3": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+            "4": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
         }
     },
   ]

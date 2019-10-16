@@ -1,6 +1,7 @@
 // configure the test here
 var TestConfig = {
   "TestName": "ABX Demo Test",
+  "RatingText": "Please select the item which is closest to X!",
   "LoopByDefault": true,
   "ShowFileIDs": false,
   "ShowResults": false,
@@ -15,8 +16,8 @@ var TestConfig = {
       "Name": "Schubert",
       "TestID": "id1",
       "Files": {
-        "A": "audio/schubert_ref.wav",
-        "B": "audio/schubert_2.wav",
+        "A": "audio/MScR_listening_test/StoryOfCars_sample_04/copy_synthesis.wav",
+        "B": "audio/MScR_listening_test/Hamlet_sample_07/copy_synthesis.wav",
       }
     },
     //    
@@ -24,8 +25,8 @@ var TestConfig = {
       "Name": "Castanets",
       "TestID": "id2",
       "Files": {
-        "A": "audio/castanets_ref.wav",
-        "B": "audio/castanets_2.wav",
+        "A": "audio/MScR_listening_test/PirateAdventures_sample_01/copy_synthesis.wav",
+        "B": "audio/MScR_listening_test/SecretGarden_sample_05/copy_synthesis.wav",
       }
     },
   ]

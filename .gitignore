@@ -1,3 +1,6 @@
 *~
 audio/
 audio/*
+web_service/results/*
+.DS_Store
+.idea
