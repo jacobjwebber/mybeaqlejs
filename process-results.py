@@ -65,6 +65,9 @@ def handle_response_list(ls):
     print(
         f"{num} listeners selected {centA}% A, {centB}% B, and didn't select either {centNone}%"
         )
+    print(
+        f'{totA+totB} valid responses, {totNone} invalid'
+        )
 
 def main():
     results = glob(RESULTS_DIR)
