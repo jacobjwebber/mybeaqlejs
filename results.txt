@@ -1,0 +1,20 @@
+Person selected 47.88732394366197% A, 52.11267605633803% B, and didn't select either 0.0%
+Person selected 21.12676056338028% A, 78.87323943661971% B, and didn't select either 0.0%
+Person selected 54.54545454545454% A, 45.45454545454546% B, and didn't select either 38.028169014084504%
+Person selected 9.230769230769232% A, 90.76923076923077% B, and didn't select either 8.450704225352112%
+Person selected 4.225352112676056% A, 95.77464788732394% B, and didn't select either 0.0%
+Person selected 18.30985915492958% A, 81.69014084507042% B, and didn't select either 0.0%
+Person selected 8.450704225352112% A, 91.54929577464789% B, and didn't select either 0.0%
+Person selected 30.434782608695656% A, 69.56521739130434% B, and didn't select either 2.8169014084507045%
+Person selected 47.88732394366197% A, 52.11267605633803% B, and didn't select either 0.0%
+Person selected 8.450704225352112% A, 91.54929577464789% B, and didn't select either 0.0%
+Person selected 18.30985915492958% A, 81.69014084507042% B, and didn't select either 0.0%
+Person selected 32.857142857142854% A, 67.14285714285714% B, and didn't select either 1.4084507042253522%
+Person selected 35.2112676056338% A, 64.7887323943662% B, and didn't select either 0.0%
+Person selected 4.225352112676056% A, 95.77464788732394% B, and didn't select either 0.0%
+Person selected 1.4084507042253522% A, 98.59154929577464% B, and didn't select either 0.0%
+Person selected 35.2112676056338% A, 64.7887323943662% B, and didn't select either 0.0%
+Person selected 45.09803921568628% A, 54.90196078431372% B, and didn't select either 28.169014084507044%
+Person selected 5.88235294117647% A, 94.11764705882354% B, and didn't select either 4.225352112676056%
+18 listeners selected 22.8876127973749% A, 77.1123872026251% B, and didn't select either 4.616588419405321%
+1219 valid responses, 59 invalid
